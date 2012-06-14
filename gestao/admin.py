@@ -1,9 +1,26 @@
+# -*- coding: utf-8 -*-
+#
+#  Copyleft (c) 2011 André Filipe A. Brito e contribuidores
+#
+#
+#  Conselhos is free software under terms of the GNU Affero General Public
+#  License version 3 (AGPLv3) as published by the Free
+#  Software Foundation. See the file README for copying conditions.
+#
+#Importa os Modelos
 from gestao.models import Conselho, Conselheiro, Legislacao, Mandato, CargosPrevistos, Reuniao
+
+#Importa a classe ModelForm para personalização de formulário
 from django.forms import ModelForm
+
+#Importa a classe BRPhoneNumberField para validação dos Telefones nos modelos
 from django.contrib.localflavor.br.forms import BRPhoneNumberField
+
+#Importa o Admin
 from django.contrib import admin
 
 
+#Personalização do campo telefone no modelo Conselho
 class ConselhoForm(ModelForm):
     telefone = BRPhoneNumberField()
 
@@ -11,6 +28,7 @@ class ConselhoForm(ModelForm):
         model = Conselho
 
 
+#Personalização do campo telefone no modelo Conselheiro
 class ConselheiroForm(ModelForm):
     telefone = BRPhoneNumberField()
 
@@ -18,10 +36,17 @@ class ConselheiroForm(ModelForm):
         model = Conselheiro
 
 
+#Insere o Modelo 'Mandato' dentro do formulário de Conselho
 class MandatoInline(admin.TabularInline):
     model = Mandato
 
 
+#Insere o Modelo 'CargosPrevistos' dentro do formulário de Legislação
+class CargosPrevistosInLine(admin.TabularInline):
+    model = CargosPrevistos
+
+
+#Define a interface admin de Conselhos
 class ConselhoAdmin(admin.ModelAdmin):
     form = ConselhoForm
     list_display = ('nome', 'categoria', 'email', 'presidente', 'n_cargos', 'previstos_cargos')
@@ -32,44 +57,34 @@ class ConselhoAdmin(admin.ModelAdmin):
     ]
 
 
+#Define a interface admin de Mandatos
 class MandatoAdmin(admin.ModelAdmin):
     list_display = ('nome', 'atribuicao', 'cargo', 'conselho', 'jeton')
     list_filter = ('jeton',)
 
 
+#Define a interface admin de CamposPrevistos
 class CargosPrevistosAdmin(admin.ModelAdmin):
     list_display = ('legislacao', 'conselho', 'atribuicao', 'cargo', 'poder')
 
 
+#Define a interface admin de Legislação
 class LegislacaoAdmin(admin.ModelAdmin):
     list_display = ('titulo', 'data', 'categoria', 'conselho', 'n_cargos', 'link')
+    inlines = [
+        CargosPrevistosInLine,
+    ]
 
 
+#Define a interface admin de Reuniões dos Conselhos
 class ReuniaoAdmin(admin.ModelAdmin):
     list_display = ('data', 'conselho', 'ata')
 
 
+#Define a interface admin de Conselheiros
 class ConselheiroAdmin(admin.ModelAdmin):
     form = ConselheiroForm
     list_display = ('nome', 'telefone', 'email', 'conselhos')
-
-#   class LiderancaAdmin(admin.ModelAdmin):
-#   list_display = ('nome', 'email', 'telefone')
-#   list_filter = ('entidade',)
-#   filter_horizontal = ('entidade',)
-#   search_fields = ['nome']
-
-#class DemandaAdmin(admin.ModelAdmin):
-#   list_display = ('prazo', 'demanda', 'responsavel', 'situacao', 'prioridade')
-#   filter_horizontal = ('entidade',)
-
-#class AudienciaAdmin(admin.ModelAdmin):
-#   list_display = ('demanda', 'data', 'local')
-#   raw_id_field = ('demanda',)
-#   filter_horizontal = ('presenca',)
-
-#class ResponsavelAdmin(admin.ModelAdmin):
-#   pass
 
 
 admin.site.register(Conselho, ConselhoAdmin)
