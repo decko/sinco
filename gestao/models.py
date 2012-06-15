@@ -12,11 +12,11 @@ from django.db import models
 
 class Conselheiro(models.Model):
     nome = models.CharField('Nome Completo', max_length=50)
-    endereco = models.TextField('Endereço Completo', blank=True)
-    telefone = models.CharField('Telefone para Contato', max_length=13, blank=True)
-    email = models.EmailField('E-Mail', blank=True)
-    vinculo = models.TextField('Vinculo Politico', blank=True)
-    descricao = models.TextField('Descrição', blank=True)
+    endereco = models.TextField('Endereço Completo', blank=True, null=True)
+    telefone = models.CharField('Telefone para Contato', max_length=13, blank=True, null=True)
+    email = models.EmailField('E-Mail', blank=True, null=True)
+    vinculo = models.TextField('Vinculo Politico', blank=True, null=True)
+    descricao = models.TextField('Descrição', blank=True, null=True)
 
     class Meta:
         verbose_name = 'Conselheiro'
@@ -26,11 +26,7 @@ class Conselheiro(models.Model):
         return self.nome
 
     def conselhos(self):
-        lista = []
-        conselhos = Mandato.objects.filter(nome__id=self.id)
-        for conselho in conselhos:
-            lista.append(conselho.conselho)
-        return lista
+        return "%s" % (", ".join([str(mandato.conselho) for mandato in self.mandato_set.all()]))
 
 
 class Conselho(models.Model):
@@ -57,11 +53,11 @@ class Conselho(models.Model):
         )
     )
     nome = models.CharField('Nome do Conselho', max_length=150)
-    categoria = models.CharField('Categoria', max_length=5, choices=CATEGORIA_CHOICES)
-    email = models.EmailField('E-Mail')
-    telefone = models.CharField('Telefone para Contato', max_length=13)
-    endereco = models.TextField('Endereço Atual')
-    site = models.URLField('Endereço do Site na Internet')
+    categoria = models.CharField('Categoria', max_length=6, choices=CATEGORIA_CHOICES)
+    email = models.EmailField('E-Mail', blank=True)
+    telefone = models.CharField('Telefone para Contato', max_length=13, blank=True)
+    endereco = models.TextField('Endereço Atual', blank=True)
+    site = models.URLField('Endereço do Site na Internet', blank=True)
     atribuicoes = models.TextField('Atribuições')
 
     class Meta:
@@ -72,16 +68,16 @@ class Conselho(models.Model):
         return self.nome
 
     def presidente(self):
-        return Mandato.objects.get(conselho_id__exact=self.id, atribuicao='P').__unicode__()
+        return self.mandato_set.get(atribuicao='P', data_final__isnull=True)
 
     def mandato(self):
-        return Mandato.objects.filter(conselho_id__exact=self.id).__unicode__()
+        return self.mandato_set.filter(data_final__isnull=True)
 
     def n_cargos(self):
-        return Mandato.objects.filter(conselho_id__exact=self.id).count()
+        return self.mandato_set.filter(data_final__isnull=True).count()
 
     def previstos_cargos(self):
-        return Legislacao.objects.get(pk=self.legislacao_set.all()).n_cargos
+        return self.legislacao_set.filter(n_cargos__isnull=False).latest('data').n_cargos
 
 
 class Legislacao(models.Model):
@@ -90,13 +86,14 @@ class Legislacao(models.Model):
     conselho = models.ForeignKey(Conselho)
     data = models.DateField('Data da Publicação')
     categoria = models.CharField('Categoria da Publicação', max_length=2, choices=CATEGORIA_CHOICES)
-    link = models.URLField('Link para o texto', blank=True)
-    n_cargos = models.IntegerField('Numero de Cargos Previstos na Legislação', blank=True)
-    texto = models.TextField('Texto', blank=True)
+    link = models.URLField('Link para o texto', blank=True, null=True)
+    n_cargos = models.IntegerField('Numero de Cargos Previstos na Legislação', blank=True, null=True)
+    texto = models.TextField('Texto', blank=True, null=True)
 
     class Meta:
         verbose_name = 'legislação'
         verbose_name_plural = 'legislações'
+        ordering = ['-data']
 
     def __unicode__(self):
         return self.titulo
@@ -148,7 +145,7 @@ class CargosPrevistos(models.Model):
     atribuicao = models.CharField('Atribuição do Conselheiro', max_length=1, choices=(('P', 'Presidente'), ('V', 'Vice-Presidente'), ('C', 'Conselheiro')))
     cargo = models.CharField('Categoria do Cargo', max_length=5, choices=CARGO_CHOICES)
     legislacao = models.ForeignKey(Legislacao)
-    origem = models.CharField('Origem', max_length=50)
+    origem = models.CharField('Origem', max_length=50, blank=True, null=True)
     poder = models.CharField(max_length=50, choices=PODER_CHOICES)
 
     class Meta:
@@ -157,7 +154,7 @@ class CargosPrevistos(models.Model):
             return self.cargo
 
     def conselho(self):
-        return self.mandato_set.all()
+        return Conselho.objects.get(legislacao=self.legislacao_id)
 
 
 class Mandato(models.Model):
@@ -188,7 +185,7 @@ class Mandato(models.Model):
     )
     nome = models.ForeignKey(Conselheiro)
     data_inicial = models.DateField('Data de Inicio do Mandato')
-    data_final = models.DateField('Data de Termino do Mandato', blank=True)
+    data_final = models.DateField('Data de Termino do Mandato', blank=True, null=True)
     atribuicao = models.CharField('Atribuição do Conselheiro', max_length=1, choices=(('P', 'Presidente'), ('V', 'Vice-Presidente'), ('C', 'Conselheiro')))
     cargo = models.CharField('Cargo do Conselheiro', max_length=5, choices=CARGO_CHOICES)
     conselho = models.ForeignKey(Conselho)
@@ -199,14 +196,15 @@ class Mandato(models.Model):
         verbose_name_plural = 'mandatos'
 
     def __unicode__(self):
-        return self.nome.__unicode__()
+        #return self.get_atribuicao_display()
+        return self.get_atribuicao_display() + (" no ") + self.conselho.__unicode__() + (" como ") + self.get_cargo_display()
 
 
 class Reuniao(models.Model):
     conselho = models.ForeignKey(Conselho)
     data = models.DateField('Data da Reunião')
     pauta = models.TextField('Pauta da Reunião')
-    ata = models.FileField('Arquivo da Ata', upload_to="legis")
+    ata = models.FileField('Arquivo da Ata', upload_to="legis", blank=True, null=True)
     texto_ata = models.TextField('Texto da Ata')
 
     class Meta:

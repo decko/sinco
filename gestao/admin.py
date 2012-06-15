@@ -83,6 +83,7 @@ class ReuniaoAdmin(admin.ModelAdmin):
 
 #Define a interface admin de Conselheiros
 class ConselheiroAdmin(admin.ModelAdmin):
+    search_fields = ['nome']
     form = ConselheiroForm
     list_display = ('nome', 'telefone', 'email', 'conselhos')
 
