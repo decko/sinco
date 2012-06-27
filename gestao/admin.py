@@ -70,7 +70,7 @@ class CargosPrevistosAdmin(admin.ModelAdmin):
 
 #Define a interface admin de Legislação
 class LegislacaoAdmin(admin.ModelAdmin):
-    list_display = ('titulo', 'data', 'categoria', 'conselho', 'n_cargos', 'link')
+    list_display = ('titulo', 'data', 'categoria', 'ementa', 'n_cargos', 'url')
     inlines = [
         CargosPrevistosInLine,
     ]

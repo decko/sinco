@@ -8,7 +8,7 @@
 #  Software Foundation. See the file README for copying conditions.
 #
 from django.db import models
-
+from django.utils.safestring import mark_safe
 
 class Conselheiro(models.Model):
     nome = models.CharField('Nome Completo', max_length=50)
@@ -19,8 +19,7 @@ class Conselheiro(models.Model):
     descricao = models.TextField('Descrição', blank=True, null=True)
 
     class Meta:
-        verbose_name = 'Conselheiro'
-        verbose_name_plural = 'Conselheiros'
+        verbose_name = 'conselheiro'
 
     def __unicode__(self):
         return self.nome
@@ -50,7 +49,8 @@ class Conselho(models.Model):
                 ('CEAIAD', 'Conselho de Estado de Administração Indireta - Administração'),
                 ('CEAIFI', 'Conselho de Estado de Administração Indireta - Fiscal'),
             )
-        )
+        ),
+        ('NC', 'Não Classificado')
     )
     nome = models.CharField('Nome do Conselho', max_length=150)
     categoria = models.CharField('Categoria', max_length=6, choices=CATEGORIA_CHOICES)
@@ -62,19 +62,18 @@ class Conselho(models.Model):
 
     class Meta:
         verbose_name = 'conselho'
-        verbose_name_plural = 'conselhos'
 
     def __unicode__(self):
         return self.nome
 
     def presidente(self):
-        return self.mandato_set.get(atribuicao='P', data_final__isnull=True)
+        return self.mandato_set.get(atribuicao='P', data_termino__isnull=True).nome
 
     def mandato(self):
-        return self.mandato_set.filter(data_final__isnull=True)
+        return self.mandato_set.filter(data_termino__isnull=True)
 
     def n_cargos(self):
-        return self.mandato_set.filter(data_final__isnull=True).count()
+        return self.mandato_set.filter(data_termino__isnull=True).count()
 
     def previstos_cargos(self):
         return self.legislacao_set.filter(n_cargos__isnull=False).latest('data').n_cargos
@@ -83,11 +82,12 @@ class Conselho(models.Model):
 class Legislacao(models.Model):
     CATEGORIA_CHOICES = (('LF', 'Lei Federal'), ('LD', 'Lei Distrital'), ('D', 'Decreto'), ('I', 'Instrução Normativa'), ('P', 'Portaria'), ('R', 'Regimento Interno'))
     titulo = models.CharField('Titulo da Legislação', max_length=300)
+    ementa = models.CharField('Ementa da Matéria', max_length=600, blank=True)
     conselho = models.ForeignKey(Conselho)
     data = models.DateField('Data da Publicação')
     categoria = models.CharField('Categoria da Publicação', max_length=2, choices=CATEGORIA_CHOICES)
     link = models.URLField('Link para o texto', blank=True, null=True)
-    n_cargos = models.IntegerField('Numero de Cargos Previstos na Legislação', blank=True, null=True)
+    n_cargos = models.IntegerField('Nº de Cargos Previstos', blank=True, null=True)
     texto = models.TextField('Texto', blank=True, null=True)
 
     class Meta:
@@ -96,7 +96,17 @@ class Legislacao(models.Model):
         ordering = ['-data']
 
     def __unicode__(self):
-        return self.titulo
+        return "%s %s, de %s" % (self.get_categoria_display(), self.titulo, str(self.data))
+
+    def n_cargos_previstos(self):
+        return self.cargosprevistos_set.count()
+
+    def url(self):
+        if self.link:
+            return '<a href=\"%s\">Clique aqui.</a>' % (self.link)
+        else:
+            return "Não encontrado"
+    url.allow_tags=True
 
 
 class CargosPrevistos(models.Model):
@@ -150,11 +160,77 @@ class CargosPrevistos(models.Model):
 
     class Meta:
 
+        verbose_name = 'cargo previsto'
+        verbose_name_plural = 'cargos previstos'
+
         def __unicode__(self):
             return self.cargo
 
     def conselho(self):
         return Conselho.objects.get(legislacao=self.legislacao_id)
+
+
+class EstruturaRegimental(models.Model):
+    conselho = ForeignKey(Conselho)
+    data = DateField('Data do Inicio da Vigencia')
+
+class CargoRegimental(models.Model):
+    CARGO_CHOICES = (
+        ('Membro Nato',
+            (
+                ('MNSC', 'Membro Nato da Sociedade Civil'),
+                ('MNPP', 'Membro Nato do Poder Público')
+            )
+        ),
+        ('Indicação Institucional',
+            (
+                ('IISC', 'Indicação Institucional da Sociedade Civil'),
+                ('IISCE', 'Indicação Institucional da Sociedade Civil por Eleição'),
+                ('IIPP', 'Indicação Institucional do Poder Público')
+            )
+        ),
+        ('Indicação',
+            (
+                ('IPGA', 'Indicação por Gestor da Área'),
+                ('IPGAT', 'Indicação por Gestor da Área por Lista Triplice'),
+                ('IPG', 'Indicação pelo Governador'),
+                ('IPGT', 'Indicação pelo Governador por Lista Triplice'),
+                ('IPS', 'Indicação pelo Segmento da Sociedade Cívil'),
+                ('IPSE', 'Indicação pelo Segmento da Sociedade Cívil por Eleição')
+            )
+        )
+    )
+    PODER_CHOICES = (
+        ('Poderes Distritais',
+            (
+                ('PED', 'Poder Executivo Distrital'),
+                ('PLD', 'Poder Legislativo Distrital'),
+                ('PJD', 'Poder Judiciario Distrital')
+            )
+        ),
+        ('Poderes Federais',
+            (
+                ('PEF', 'Poder Executivo Federal'),
+                ('PLF', 'Poder Legislativo Federal'),
+                ('PJF', 'Poder Judiciario Federal')
+            )
+        ),
+        ('SC', 'Sociedade Cívil')
+    )
+    estrutra = ForeignKey(EstruturaRegimental)
+    atribuicao = models.CharField('Atribuição do Conselheiro', max_length=1, choices=(('P', 'Presidente'), ('V', 'Vice-Presidente'), ('C', 'Conselheiro')))
+    cargo = models.CharField('Categoria do Cargo', max_length=5, choices=CARGO_CHOICES)
+    origem = models.CharField('Origem', max_length=50, blank=True, null=True)
+    poder = models.CharField(max_length=50, choices=PODER_CHOICES)
+    previsao = models.BooleanField('Previsto em Legislação?')
+
+    class Meta:
+
+        verbose_name = 'cargo regimental'
+        verbose_name_plural = 'cargos regimentais'
+
+        def __unicode__(self):
+            return self.cargo
 
 
 class Mandato(models.Model):
@@ -186,6 +262,7 @@ class Mandato(models.Model):
     nome = models.ForeignKey(Conselheiro)
     data_inicial = models.DateField('Data de Inicio do Mandato')
     data_final = models.DateField('Data de Termino do Mandato', blank=True, null=True)
+    data_termino = models.DateField('Data de Encerramento do Mandato', blank=True, null=True)
     atribuicao = models.CharField('Atribuição do Conselheiro', max_length=1, choices=(('P', 'Presidente'), ('V', 'Vice-Presidente'), ('C', 'Conselheiro')))
     cargo = models.CharField('Cargo do Conselheiro', max_length=5, choices=CARGO_CHOICES)
     conselho = models.ForeignKey(Conselho)
@@ -193,23 +270,36 @@ class Mandato(models.Model):
 
     class Meta:
         verbose_name = 'mandato'
-        verbose_name_plural = 'mandatos'
 
     def __unicode__(self):
-        #return self.get_atribuicao_display()
         return self.get_atribuicao_display() + (" no ") + self.conselho.__unicode__() + (" como ") + self.get_cargo_display()
 
 
 class Reuniao(models.Model):
+    def get_image_path(instance, filename):
+        return os.path.join(slugify(str(instance.conselho)), 'reuniao', filename)
+
     conselho = models.ForeignKey(Conselho)
     data = models.DateField('Data da Reunião')
     pauta = models.TextField('Pauta da Reunião')
-    ata = models.FileField('Arquivo da Ata', upload_to="legis", blank=True, null=True)
-    texto_ata = models.TextField('Texto da Ata')
+    ata = models.FileField('Arquivo da Ata', upload_to=get_image_path, blank=True)
+    texto_ata = models.TextField('Texto da Ata', blank=True)
 
     class Meta:
         verbose_name = 'reunião'
         verbose_name_plural = 'reuniões'
+        ordering = ['-data']
 
     def __unicode__(self):
         return self.conselho.__unicode__()
+
+    def url(self):
+        if self.ata:
+            return self.ata.url
+        else:
+            return ""
+
+    def save(self):
+        arquivo, ponto, extensao = self.ata.name.rpartition('.')
+        self.ata.name = slugify(self.data) + '.' + extensao
+        super(Reuniao, self).save()
