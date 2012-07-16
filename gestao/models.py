@@ -7,19 +7,22 @@
 #  License version 3 (AGPLv3) as published by the Free
 #  Software Foundation. See the file README for copying conditions.
 #
+import os
 from django.db import models
-from django.utils.safestring import mark_safe
+from django.template.defaultfilters import slugify
+from django.core.exceptions import ValidationError
+
 
 class Conselheiro(models.Model):
     nome = models.CharField('Nome Completo', max_length=50)
     endereco = models.TextField('Endereço Completo', blank=True, null=True)
-    telefone = models.CharField('Telefone para Contato', max_length=13, blank=True, null=True)
     email = models.EmailField('E-Mail', blank=True, null=True)
     vinculo = models.TextField('Vinculo Politico', blank=True, null=True)
     descricao = models.TextField('Descrição', blank=True, null=True)
 
     class Meta:
         verbose_name = 'conselheiro'
+        ordering = ['nome']
 
     def __unicode__(self):
         return self.nome
@@ -55,7 +58,6 @@ class Conselho(models.Model):
     nome = models.CharField('Nome do Conselho', max_length=150)
     categoria = models.CharField('Categoria', max_length=6, choices=CATEGORIA_CHOICES)
     email = models.EmailField('E-Mail', blank=True)
-    telefone = models.CharField('Telefone para Contato', max_length=13, blank=True)
     endereco = models.TextField('Endereço Atual', blank=True)
     site = models.URLField('Endereço do Site na Internet', blank=True)
     atribuicoes = models.TextField('Atribuições')
@@ -106,7 +108,7 @@ class Legislacao(models.Model):
             return '<a href=\"%s\">Clique aqui.</a>' % (self.link)
         else:
             return "Não encontrado"
-    url.allow_tags=True
+    url.allow_tags = True
 
 
 class CargosPrevistos(models.Model):
@@ -163,16 +165,45 @@ class CargosPrevistos(models.Model):
         verbose_name = 'cargo previsto'
         verbose_name_plural = 'cargos previstos'
 
-        def __unicode__(self):
-            return self.cargo
+    def __unicode__(self):
+        return self.cargo
 
     def conselho(self):
         return Conselho.objects.get(legislacao=self.legislacao_id)
 
 
+class Telefone(models.Model):
+    conselho = models.ForeignKey(Conselho, blank=True, null=True)
+    conselheiro = models.ForeignKey(Conselheiro, blank=True, null=True)
+    numero = models.CharField('Telefone para Contato', max_length=13, blank=True, null=True)
+    tipo = models.CharField('Tipo', max_length=2, choices=(('PI', 'Principal'), ('C', 'Contato'), ('I', 'Institucional'), ('PE', 'Pessoal')))
+
+    class Meta:
+        verbose_name = u'telefone'
+        verbose_name_plural = u'telefones'
+
+    def __unicode__(self):
+        return self.numero
+
+    def atribuido(self):
+        if self.conselheiro.nome:
+            return self.conselheiro.nome
+        else:
+            return self.conselho.nome
+
+
 class EstruturaRegimental(models.Model):
-    conselho = ForeignKey(Conselho)
-    data = DateField('Data do Inicio da Vigencia')
+    conselho = models.ForeignKey(Conselho)
+    data = models.DateField('Data do Inicio da Vigencia')
+
+    class Meta:
+        verbose_name = "estrutura regimental"
+        verbose_name_plural = "estruturas regimentais"
+        ordering = ['-data']
+
+    def __unicode__(self):
+        return u"Estrutura com inicio de vigência em %s para o %s" % (str(self.data), self.conselho)
+
 
 class CargoRegimental(models.Model):
     CARGO_CHOICES = (
@@ -217,20 +248,25 @@ class CargoRegimental(models.Model):
         ),
         ('SC', 'Sociedade Cívil')
     )
-    estrutra = ForeignKey(EstruturaRegimental)
-    atribuicao = models.CharField('Atribuição do Conselheiro', max_length=1, choices=(('P', 'Presidente'), ('V', 'Vice-Presidente'), ('C', 'Conselheiro')))
+    estrutura = models.ForeignKey(EstruturaRegimental)
     cargo = models.CharField('Categoria do Cargo', max_length=5, choices=CARGO_CHOICES)
     origem = models.CharField('Origem', max_length=50, blank=True, null=True)
     poder = models.CharField(max_length=50, choices=PODER_CHOICES)
-    previsao = models.BooleanField('Previsto em Legislação?')
+    legislacao = models.ForeignKey(Legislacao, blank=True, null=True)
 
     class Meta:
 
         verbose_name = 'cargo regimental'
         verbose_name_plural = 'cargos regimentais'
 
-        def __unicode__(self):
-            return self.cargo
+    def __unicode__(self):
+        if self.origem:
+            return u"%s, através do(a) %s pelo(a) %s" % (self.get_cargo_display(), self.get_poder_display(), self.origem)
+        else:
+            return u"%s, através do(a) %s" % (self.get_cargo_display(), self.get_poder_display())
+
+    def conselho(self):
+        return self.estrutura.conselho
 
 
 class Mandato(models.Model):
@@ -259,20 +295,35 @@ class Mandato(models.Model):
             )
         )
     )
-    nome = models.ForeignKey(Conselheiro)
+    titular = models.ForeignKey(Conselheiro, blank=True, null=True, related_name='titular')
+    suplente = models.ForeignKey(Conselheiro, blank=True, null=True, related_name='suplente')
+    suplente_exercicio = models.BooleanField('Suplente em Execicio')
     data_inicial = models.DateField('Data de Inicio do Mandato')
-    data_final = models.DateField('Data de Termino do Mandato', blank=True, null=True)
+    data_final = models.DateField('Data Prevista para Encerramento do Mandato', blank=True, null=True)
     data_termino = models.DateField('Data de Encerramento do Mandato', blank=True, null=True)
-    atribuicao = models.CharField('Atribuição do Conselheiro', max_length=1, choices=(('P', 'Presidente'), ('V', 'Vice-Presidente'), ('C', 'Conselheiro')))
-    cargo = models.CharField('Cargo do Conselheiro', max_length=5, choices=CARGO_CHOICES)
     conselho = models.ForeignKey(Conselho)
+    atribuicao = models.CharField('Atribuição do Conselheiro', max_length=1, choices=(('P', 'Presidente'), ('V', 'Vice-Presidente'), ('C', 'Conselheiro')))
+    cargo = models.ForeignKey(CargoRegimental)
     jeton = models.BooleanField('Recebe Jeton?')
 
     class Meta:
         verbose_name = 'mandato'
+        ordering = ['-data_inicial', 'titular']
 
     def __unicode__(self):
-        return self.get_atribuicao_display() + (" no ") + self.conselho.__unicode__() + (" como ") + self.get_cargo_display()
+        return self.titular.nome
+
+    def clean(self):
+        if self.titular == self.suplente:
+            raise ValidationError('O Titular e o Suplente da vaga não podem ser a mesma pessoa')
+
+        if self.data_final:
+            if self.data_final < self.data_inicial:
+                raise ValidationError('A Data Prevista para o Encerramento do Mandato deve ser posterior à Data de Inicio do Mandato')
+
+        if self.data_termino:
+            if self.data_termino < self.data_inicial:
+                raise ValidationError('A Data de Encerramento do Mandato não deve ser anterior à Data de Inicio de Mandato')
 
 
 class Reuniao(models.Model):

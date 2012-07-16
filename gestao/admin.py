@@ -8,7 +8,7 @@
 #  Software Foundation. See the file README for copying conditions.
 #
 #Importa os Modelos
-from gestao.models import Conselho, Conselheiro, Legislacao, Mandato, CargosPrevistos, Reuniao
+from gestao.models import Conselho, Conselheiro, Legislacao, Mandato, CargosPrevistos, Reuniao, CargoRegimental, EstruturaRegimental, Telefone
 
 #Importa a classe ModelForm para personalização de formulário
 from django.forms import ModelForm
@@ -19,21 +19,44 @@ from django.contrib.localflavor.br.forms import BRPhoneNumberField
 #Importa o Admin
 from django.contrib import admin
 
+from flexselect import FlexSelectWidget
+
+
+class MandatoWidget(FlexSelectWidget):
+
+    trigger_fields = ['conselho']
+
+    def details(self, base_field_instance, instance):
+        return ""
+
+    def queryset(self, instance):
+
+        if not instance.id:
+            conselho = instance.conselho.id
+            estrutura = EstruturaRegimental.objects.filter(conselho=conselho).latest('data')
+            return CargoRegimental.objects.filter(estrutura=estrutura).exclude(mandato__data_termino__isnull=True, mandato__data_inicial__isnull=False)
+        else:
+            cargo = instance.cargo.id
+            return CargoRegimental.objects.filter(pk=cargo)
+
+    def empty_choices_text(self, instance):
+        """
+        If either of the trigger_fields is None this function will be called
+        to get the text for the empty choice in the select box of the base
+        field.
+
+        - instance: A partial instance of the parent model loaded from the
+                    request.
+        """
+        return "-----"
+
 
 #Personalização do campo telefone no modelo Conselho
-class ConselhoForm(ModelForm):
-    telefone = BRPhoneNumberField()
+class TelefoneForm(ModelForm):
+    numero = BRPhoneNumberField()
 
     class Meta:
-        model = Conselho
-
-
-#Personalização do campo telefone no modelo Conselheiro
-class ConselheiroForm(ModelForm):
-    telefone = BRPhoneNumberField()
-
-    class Meta:
-        model = Conselheiro
+        model = Telefone
 
 
 #Insere o Modelo 'Mandato' dentro do formulário de Conselho
@@ -46,20 +69,41 @@ class CargosPrevistosInLine(admin.TabularInline):
     model = CargosPrevistos
 
 
+class TelefoneInLineConselheiro(admin.TabularInline):
+    form = TelefoneForm
+    fields = ('conselheiro', 'numero', 'tipo')
+    model = Telefone
+
+
+class TelefoneInLineConselho(admin.TabularInline):
+    form = TelefoneForm
+    fields = ('conselho', 'numero', 'tipo')
+    model = Telefone
+
+
 #Define a interface admin de Conselhos
 class ConselhoAdmin(admin.ModelAdmin):
-    form = ConselhoForm
     list_display = ('nome', 'categoria', 'email', 'presidente', 'n_cargos', 'previstos_cargos')
     list_filter = ('categoria',)
     search_fields = ['nome']
     inlines = [
-        MandatoInline,
+        TelefoneInLineConselho,
     ]
 
 
 #Define a interface admin de Mandatos
 class MandatoAdmin(admin.ModelAdmin):
-    list_display = ('nome', 'atribuicao', 'cargo', 'conselho', 'jeton')
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "cargo":
+            kwargs['widget'] = MandatoWidget(
+                base_field=db_field,
+                modeladmin=self,
+                request=request,
+            )
+            kwargs['label'] = 'Cargo'
+        return super(MandatoAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+
+    list_display = ('titular', 'suplente', 'suplente_exercicio', 'cargo', 'conselho', 'jeton')
     list_filter = ('jeton',)
 
 
@@ -84,8 +128,30 @@ class ReuniaoAdmin(admin.ModelAdmin):
 #Define a interface admin de Conselheiros
 class ConselheiroAdmin(admin.ModelAdmin):
     search_fields = ['nome']
-    form = ConselheiroForm
-    list_display = ('nome', 'telefone', 'email', 'conselhos')
+    list_display = ('nome', 'email', 'conselhos')
+    inlines = [
+        TelefoneInLineConselheiro,
+    ]
+
+
+class CargoRegimentalAdmin(admin.ModelAdmin):
+    list_display = ('conselho', '__unicode__')
+
+
+class TelefoneForm(ModelForm):
+    numero = BRPhoneNumberField()
+
+    class Meta:
+        model = Telefone
+
+
+class TelefoneAdmin(admin.ModelAdmin):
+    form = TelefoneForm
+    list_display = ('numero', 'tipo')
+
+
+
+
 
 
 admin.site.register(Conselho, ConselhoAdmin)
@@ -94,3 +160,6 @@ admin.site.register(Legislacao, LegislacaoAdmin)
 admin.site.register(Mandato, MandatoAdmin)
 admin.site.register(CargosPrevistos, CargosPrevistosAdmin)
 admin.site.register(Reuniao, ReuniaoAdmin)
+admin.site.register(EstruturaRegimental)
+admin.site.register(CargoRegimental, CargoRegimentalAdmin)
+admin.site.register(Telefone, TelefoneAdmin)
