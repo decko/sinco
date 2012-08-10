@@ -69,7 +69,7 @@ class Conselho(models.Model):
         return self.nome
 
     def presidente(self):
-        return self.mandato_set.get(atribuicao='P', data_termino__isnull=True).nome
+        return self.mandato_set.get(atribuicao='P', data_termino__isnull=True)
 
     def mandato(self):
         return self.mandato_set.filter(data_termino__isnull=True)
@@ -98,7 +98,10 @@ class Legislacao(models.Model):
         ordering = ['-data']
 
     def __unicode__(self):
-        return "%s %s, de %s" % (self.get_categoria_display(), self.titulo, str(self.data))
+        if self.ementa:
+            return "%s %s, que %s" % (self.get_categoria_display(), self.titulo, self.ementa)
+        else:
+            return "%s %s" % (self.get_categoria_display(), self.titulo)
 
     def n_cargos_previstos(self):
         return self.cargosprevistos_set.count()
@@ -166,7 +169,10 @@ class CargosPrevistos(models.Model):
         verbose_name_plural = 'cargos previstos'
 
     def __unicode__(self):
-        return self.cargo
+        if self.origem:
+            return u"%s, %s, através do(a) %s pelo(a) %s" % (self.get_atribuicao_display(), self.get_cargo_display(), self.get_poder_display(), self.origem)
+        else:
+            return u"%s, %s, através do(a) %s" % (self.get_atribuicao_display(), self.get_cargo_display(), self.get_poder_display())
 
     def conselho(self):
         return Conselho.objects.get(legislacao=self.legislacao_id)
@@ -268,6 +274,10 @@ class CargoRegimental(models.Model):
     def conselho(self):
         return self.estrutura.conselho
 
+    def mandato_vigente(self):
+        if self.mandato_set.all().exclude(data_termino__isnull=False):
+            return self.mandato_set.all().exclude(data_termino__isnull=False)[0]
+
 
 class Mandato(models.Model):
     CARGO_CHOICES = (
@@ -311,7 +321,10 @@ class Mandato(models.Model):
         ordering = ['-data_inicial', 'titular']
 
     def __unicode__(self):
-        return self.titular.nome
+        if not self.suplente_exercicio:
+            return u'%s' % self.titular.nome
+        else:
+            return u'%s' % self.suplente.nome
 
     def clean(self):
         if self.titular == self.suplente:

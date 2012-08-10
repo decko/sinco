@@ -19,6 +19,7 @@ from django.contrib.localflavor.br.forms import BRPhoneNumberField
 #Importa o Admin
 from django.contrib import admin
 
+#Utiliza django-admin-flexselect para filtrar os cargos disponiveis por conselho
 from flexselect import FlexSelectWidget
 
 
@@ -83,9 +84,9 @@ class TelefoneInLineConselho(admin.TabularInline):
 
 #Define a interface admin de Conselhos
 class ConselhoAdmin(admin.ModelAdmin):
+    search_fields = ['nome']
     list_display = ('nome', 'categoria', 'email', 'presidente', 'n_cargos', 'previstos_cargos')
     list_filter = ('categoria',)
-    search_fields = ['nome']
     inlines = [
         TelefoneInLineConselho,
     ]
@@ -109,11 +110,13 @@ class MandatoAdmin(admin.ModelAdmin):
 
 #Define a interface admin de CamposPrevistos
 class CargosPrevistosAdmin(admin.ModelAdmin):
+    search_fields = ['conselho', 'atribuicao']
     list_display = ('legislacao', 'conselho', 'atribuicao', 'cargo', 'poder')
 
 
 #Define a interface admin de Legislação
 class LegislacaoAdmin(admin.ModelAdmin):
+    search_fields = ['titulo', 'data', 'ementa']
     list_display = ('titulo', 'data', 'categoria', 'ementa', 'n_cargos', 'url')
     inlines = [
         CargosPrevistosInLine,
@@ -135,6 +138,7 @@ class ConselheiroAdmin(admin.ModelAdmin):
 
 
 class CargoRegimentalAdmin(admin.ModelAdmin):
+    search_fields = ['conselho', '__unicode__']
     list_display = ('conselho', '__unicode__')
 
 
@@ -148,10 +152,6 @@ class TelefoneForm(ModelForm):
 class TelefoneAdmin(admin.ModelAdmin):
     form = TelefoneForm
     list_display = ('numero', 'tipo')
-
-
-
-
 
 
 admin.site.register(Conselho, ConselhoAdmin)

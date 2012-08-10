@@ -1,4 +1,5 @@
 from django.conf.urls import patterns, include, url
+from gestao.views import index, conselhos, conselho, conselheiro
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -15,4 +16,9 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
     (r'^flexselect/', include('flexselect.urls')),
+    url(r'^conselhos/$', index),
+    url(r'^conselhos/(?P<categoria>\w+)/$', conselhos),
+
+    url(r'^conselho/(?P<conselho_id>\d+)/$', conselho),
+    url(r'^conselheiro/(?P<conselheiro_id>\d+)/$', conselheiro),
 )
