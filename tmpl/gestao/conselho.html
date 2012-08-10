@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+
+  <!-- Set the viewport width to device width for mobile -->
+  <meta name="viewport" content="width=device-width" />
+
+  <title>Conselhos - Informações sobre o Conselho</title>
+
+  <!-- Included CSS Files -->
+  <link rel="stylesheet" href="/static/stylesheets/foundation.css">
+  <link rel="stylesheet" href="/static/stylesheets/app.css">
+
+  <!--[if lt IE 9]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+  <![endif]-->
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+  <script src="/static/javascripts/jquery.customforms.js"></script>
+  <script src="/static/javascripts/jquery.placeholder.min.js"></script>
+  <script src="/static/javascripts/jquery.tooltips.js"></script>
+  <script src="/static/javascripts/modernizr.foundation.js"></script>
+  <script src="/static/javascripts/app.js"></script>
+
+  <!-- IE Fix for HTML5 Tags -->
+  <!--[if lt IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+</head>
+<body>
+  <div class="container top-bar home-border">
+    <div class="attached">
+      <ul class="right">
+        <li><a href="http://gdf.df.gov.br"><img src="/static/images/secgov.png"></a>
+        </li>
+      </ul>
+    </div>
+  </div>
+	<div class="row">
+    	<div class="twelve columns">
+          <p><a href="/conselhos/conselhos/">--- Voltar</a></p>
+      		<h2>{{ conselho.nome }}</h2>
+      		<p class="subheader">Fundado em {{ fundacao.data }} pelo(a) {{ fundacao.get_categoria_display }} {{ fundacao.titulo }}</p>
+        <hr />
+    </div>
+  </div>
+  <div class="row">
+    <div class="twelve columns">
+		<dl class="tabs">
+  			<dd class="active"><a href="#dadosbasicos">Dados Básicos</a></dd>
+  			<dd><a href="#legislacao">Legislação</a></dd>
+        <dd><a href="#estrutura">Estrutura</a></dd>
+  			<dd><a href="#mandatos">Mandatos</a></dd>
+        <dd><a href="#estatisticas">Estatísticas</a></dd>
+		</dl>
+
+		<ul class="tabs-content">
+  			<li class="active" id="dadosbasicosTab">
+  				<p><b>Categoria:</b> {{ conselho.get_categoria_display }}</p>
+  				<p><b>E-Mail:</b> <a href="mailto:{{ conselho.email }}">{{ conselho.email }}</a></p>
+  				<p><b>Endereço:</b> {{ conselho.endereco }}</p>
+  				<p><b>Site:</b> <a href="{{ conselho.site }}">{{ conselho.site }}</a></p>
+  				<p><b>Atribuições:</b> {{ conselho.atribuicoes|linebreaks }}</p>
+  			</li>
+  			<li id="legislacaoTab">
+          {% for legislacao in legislacoes %}
+            <p><a href="{{ legislacao.link }}">{{ legislacao }}</a></p>
+          {% endfor %}
+        </li>
+        <li id="estruturaTab">
+          <table>
+            <thead>Cargos da Estrutura</thead>
+            <tr>
+              <th>Cargo</th>
+              <th>Legislação</th>
+              <th>Conselheiro</th>
+            </tr>
+            {% for cargoregimental in cargosregimentais %}
+            {% if not cargoregimental.mandato_vigente %}
+            <tr>
+              <td>{{ cargoregimental }}</td>
+              {% if cargoregimental.legislacao %}
+                <td>{{ cargoregimental.legislacao.get_categoria_display }} {{ cargoregimental.legislacao.titulo }}</td>
+              {% else %}
+                <td>Não Previsto em Legislação</td>
+              {% endif %}
+                <td>Cargo Disponível</td>
+            </tr>
+            {% else %}
+            <tr>
+              <td>{{ cargoregimental.mandato_vigente.get_atribuicao_display }}, {{cargoregimental}}</td>
+              {% if cargoregimental.legislacao %}
+                <td>{{ cargoregimental.legislacao.get_categoria_display }} {{ cargoregimental.legislacao.titulo }}</td>
+              {% else %}
+                <td>Não Previsto em Legislação</td>
+              {% endif %}
+              <td>
+                {% if not cargoregimental.mandato_vigente.suplente_exercicio %}
+                <a href="/conselheiro/{{ cargoregimental.mandato_vigente.titular_id }}">{{ cargoregimental.mandato_vigente }}</a>
+                {% else %}
+                <a href="/conselheiro/{{ cargoregimental.mandato_vigente.suplente_id }}">{{ cargoregimental.mandato_vigente }}</a>
+                {% endif %}
+              </td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+          </table>
+        </li>
+  			<li id="mandatosTab">
+          <table>
+            <th><tr>
+              <td>Nome</td>
+              <td>Inicio do Mandato</td>
+              <td>Previsão de Encerramento</td>
+              <td>Encerramento do Mandato</td>
+              <td>Atribuição</td>
+              <td>Cargo</td>
+              <td>Recebe Jeton</td>
+            </tr></th>
+              {% for mandato in mandatos %}
+              <tr>
+                {% if not mandato.suplente_exercicio %}
+                  <td>{{ mandato.titular }}</td>
+                {% else %}
+                  <td>{{ mandato.suplente }}</td>
+                {% endif %}
+                <td>{{ mandato.data_inicial }}</td>
+                <td>{{ mandato.data_final }}</td>
+                {% if mandato.data_termino %}
+                  <td>{{ mandato.data_termino }}</td>
+                {% else %}
+                  <td>Em exercicio</td>
+                {% endif %}
+                <td>{{ mandato.get_atribuicao_display }}</td>
+                <td>{{ mandato.cargo }}</td>
+                {% if mandato.jeton %}
+                <td>Sim</td>
+                {% else %}
+                <td>Não</td>
+                {% endif %}
+              </tr>
+              {% endfor %}
+          </table>
+        </li>
+        <li id="estatisticasTab">
+          <table>
+            <tr>
+              <th></th>
+              <th>Ocupados</th>
+              <th>Livres</th>
+              <th>Total</th>
+            </tr>
+            <tr>
+              <td>Cargos Previstos em Legislação</td>
+              <td>{{ n_cargos_previstos_ocupados }}</td>
+              <td>{{ n_cargos_previstos_livres }}</td>
+              <td>{{ n_cargos_previstos }}</td>
+            </tr>
+            <tr>
+              <td>Cargos Não Previstos em Legilslação</td>
+              <td>{{ n_cargos_nprevistos_ocupados }}</td>
+              <td>{{ n_cargos_nprevistos_livres }}</td>
+              <td>{{ n_cargos_nprevistos }}</td>
+            </tr>
+            <tr>
+              <td>Total de Cargos</td>
+              <td>{{ n_cargos_ocupados }}</td>
+              <td>{{ n_cargos_livres }}</td>
+              <td>{{ n_cargos }}</td>
+            </tr>
+          </table>
+          <table>
+            <tr>
+              <th></th>
+              <th>Sociedade Civil</th>
+              <th>Poder Publico Distrital</th>
+              <th>Poder Publico Federal</th>
+            </tr>
+            <tr>
+              <td>Membro Nato da Sociedade Cívil</td>
+              <td id="center">{{ cargo_membro_nato_sc.count }}</td>
+              <td>{{ cargo_membro_nato_pp_dist_sc.count }}</td>
+              <td>{{ cargo_membro_nato_pp_fed_sc.count }}</td>
+            </tr>
+            <tr>
+              <td>Membro Nato do Poder Público</td>
+              <td id="center">{{ cargo_membro_nato_sc_pp.count }}</td>
+              <td>{{ cargo_membro_nato_pp_dist.count }}</td>
+              <td>{{ cargo_membro_nato_pp_fed.count }}</td>
+            </tr>
+            <tr>
+              <td>Indicação Institucional da Sociedade Civil</td>
+              <td>{{ cargo_indicacao_sc.count }}</td>
+              <td>{{ cargo_indicacao_sc_pp_dist.count }}</td>
+              <td>{{ cargo_indicacao_sc_pp_fed.count }}</td>
+            </tr>
+            <tr>
+              <td>Indicação Inst. da Soc. Cívil por Eleição</td>
+              <td>{{ cargo_indicacao_eleicao.count }}</td>
+              <td>{{ cargo_indicacao_eleicao_pp_dist.count }}</td>
+              <td>{{ cargo_indicacao_eleicao_pp_fed.count }}</td>
+            </tr>
+            <tr>
+              <td>Indicação Institucional pelo Poder Público</td>
+              <td>{{ cargo_indicacao_pp_sc.count }}</td>
+              <td>{{ cargo_indicacao_pp_dist.count }}</td>
+              <td>{{ cargo_indicacao_pp_fed.count }}</td>
+            </tr>
+            <tr>
+              <td>Indicação por Gestor da Área</td>
+              <td>{{ cargo_indicacao_sc_gestor.count }}</td>
+              <td>{{ cargo_indicacao_pp_dist_gestor.count }}</td>
+              <td>{{ cargo_indicacao_pp_fed_gestor.count }}</td>
+            </tr>
+            <tr>
+              <td>Indicação por Gestor da Área por Lista Triplice</td>
+              <td>{{ cargo_indicacao_sc_gestorlt.count }}</td>
+              <td>{{ cargo_indicacao_pp_dist_gestorlt.count }}</td>
+              <td>{{ cargo_indicacao_pp_fed_gestorlt.count }}</td>
+            </tr>
+            <tr>
+              <td>Indicação pelo Governador</td>
+              <td>{{ cargo_indicacao_sc_gov.count }}</td>
+              <td>{{ cargo_indicacao_pp_dist_gov.count }}</td>
+              <td>{{ cargo_indicacao_pp_fed_gov.count }}</td>
+            </tr>
+            <tr>
+              <td>Indicação pelo Governador por Lista Triplice</td>
+              <td>{{ cargo_indicacao_sc_govlt.count }}</td>
+              <td>{{ cargo_indicacao_pp_dist_govlt.count }}</td>
+              <td>{{ cargo_indicacao_pp_fed_govlt.count }}</td>
+            </tr>
+            <tr>
+              <td>Indicação pelo Segmento da Sociedade Civil</td>
+              <td>{{ cargo_indicacao_sc_segsc.count }}</td>
+              <td>{{ cargo_indicacao_pp_dist_segsc.count }}</td>
+              <td>{{ cargo_indicacao_pp_fed_segsc.count }}</td>
+            </tr>
+            <tr>
+              <td>Indicação pelo Segmento da Sociedade Civil por Eleição</td>
+              <td>{{ cargo_indicacao_sc_segsce.count }}</td>
+              <td>{{ cargo_indicacao_pp_dist_segsce.count }}</td>
+              <td>{{ cargo_indicacao_pp_fed_segsce.count }}</td>
+            </tr>
+
+          </table>
+		</ul>
