@@ -27,7 +27,7 @@ def conselhos(request, categoria):
 def conselho(request, conselho_id):
     conselho = get_object_or_404(Conselho, pk=conselho_id)
     legislacoes = Legislacao.objects.filter(conselho=conselho)  # Retorna todas as legislações do conselho
-    fundacao = legislacoes[0]  # Retorna a legislação mais antiga como a que funda o conselho
+    fundacao = legislacoes.order_by('data')[0]  # Retorna a legislação mais antiga como a que funda o conselho
     mandatos = conselho.mandato()  # Recupera os mandatos
     estrutura = EstruturaRegimental.objects.filter(conselho=conselho).latest('data')  # Recupera a ultima estrutura disponível pro conselho
     cargosregimentais = CargoRegimental.objects.filter(estrutura=estrutura)  # Recupera todos os cargos da ultima estrutura
