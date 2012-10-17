@@ -4,25 +4,6 @@ import os
 
 CURRENT_DIR = os.path.dirname(__file__)
 
-DEBUG = True
-TEMPLATE_DEBUG = DEBUG
-
-ADMINS = (
-    # ('Your Name', 'your_email@example.com'),
-)
-
-MANAGERS = ADMINS
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',  # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': os.path.join(CURRENT_DIR, 'conselhos.db'),  # Or path to database file if using sqlite3.
-        'USER': '',                      # Not used with sqlite3.
-        'PASSWORD': '',                  # Not used with sqlite3.
-        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
-    }
-}
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -74,6 +55,7 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
+    os.path.join(CURRENT_DIR, 'static'),
 )
 
 # List of finder classes that know how to find static files in
@@ -83,9 +65,6 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
-
-# Make this unique, and don't share it with anybody.
-SECRET_KEY = 'lll*(wn7_f8ii!tl7r$d6my%&amp;+7-m(m6i_vqmrw=j6j4m5e=*p'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -114,23 +93,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-)
-
-INSTALLED_APPS = (
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.sites',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    # Uncomment the next line to enable the admin:
-    'django.contrib.admin',
-    # Uncomment the next line to enable admin documentation:
-    # 'django.contrib.admindocs',
-    'debug_toolbar',
-    'flexselect',
-    'django_extensions',
-    'gestao'
+    os.path.join(CURRENT_DIR, 'tmpl'),
 )
 
 # A sample logging configuration. The only tangible logging
@@ -161,4 +124,9 @@ LOGGING = {
         },
     }
 }
-INTERNAL_IPS = ('127.0.0.1',)
+
+
+try:
+    from local_settings import *
+except ImportError:
+    pass
