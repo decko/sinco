@@ -12,6 +12,49 @@ from django.db import models
 from django.template.defaultfilters import slugify
 from django.core.exceptions import ValidationError
 
+CARGO_CHOICES = (
+    ('Membro Nato',
+        (
+            ('MNSC', 'Membro Nato da Sociedade Civil'),
+            ('MNPP', 'Membro Nato do Poder Público')
+        )
+    ),
+    ('Indicação Institucional',
+        (
+            ('IISC', 'Indicação Institucional da Sociedade Civil'),
+            ('IISCE', 'Indicação Institucional da Sociedade Civil por Eleição'),
+            ('IIPP', 'Indicação Institucional do Poder Público')
+        )
+    ),
+    ('Indicação',
+        (
+            ('IPGA', 'Indicação por Gestor da Área'),
+            ('IPGAT', 'Indicação por Gestor da Área por Lista Triplice'),
+            ('IPG', 'Indicação pelo Governador'),
+            ('IPGT', 'Indicação pelo Governador por Lista Triplice'),
+            ('IPS', 'Indicação pelo Segmento da Sociedade Cívil'),
+            ('IPSE', 'Indicação pelo Segmento da Sociedade Cívil por Eleição')
+        )
+    )
+)
+PODER_CHOICES = (
+    ('Poderes Distritais',
+        (
+            ('PED', 'Poder Executivo Distrital'),
+            ('PLD', 'Poder Legislativo Distrital'),
+            ('PJD', 'Poder Judiciario Distrital')
+        )
+    ),
+    ('Poderes Federais',
+        (
+            ('PEF', 'Poder Executivo Federal'),
+            ('PLF', 'Poder Legislativo Federal'),
+            ('PJF', 'Poder Judiciario Federal')
+        )
+    ),
+    ('SC', 'Sociedade Cívil')
+)
+
 
 class Conselheiro(models.Model):
     nome = models.CharField('Nome Completo', max_length=50)
@@ -115,48 +158,6 @@ class Legislacao(models.Model):
 
 
 class CargosPrevistos(models.Model):
-    CARGO_CHOICES = (
-        ('Membro Nato',
-            (
-                ('MNSC', 'Membro Nato da Sociedade Civil'),
-                ('MNPP', 'Membro Nato do Poder Público')
-            )
-        ),
-        ('Indicação Institucional',
-            (
-                ('IISC', 'Indicação Institucional da Sociedade Civil'),
-                ('IISCE', 'Indicação Institucional da Sociedade Civil por Eleição'),
-                ('IIPP', 'Indicação Institucional do Poder Público')
-            )
-        ),
-        ('Indicação',
-            (
-                ('IPGA', 'Indicação por Gestor da Área'),
-                ('IPGAT', 'Indicação por Gestor da Área por Lista Triplice'),
-                ('IPG', 'Indicação pelo Governador'),
-                ('IPGT', 'Indicação pelo Governador por Lista Triplice'),
-                ('IPS', 'Indicação pelo Segmento da Sociedade Cívil'),
-                ('IPSE', 'Indicação pelo Segmento da Sociedade Cívil por Eleição')
-            )
-        )
-    )
-    PODER_CHOICES = (
-        ('Poderes Distritais',
-            (
-                ('PED', 'Poder Executivo Distrital'),
-                ('PLD', 'Poder Legislativo Distrital'),
-                ('PJD', 'Poder Judiciario Distrital')
-            )
-        ),
-        ('Poderes Federais',
-            (
-                ('PEF', 'Poder Executivo Federal'),
-                ('PLF', 'Poder Legislativo Federal'),
-                ('PJF', 'Poder Judiciario Federal')
-            )
-        ),
-        ('SC', 'Sociedade Cívil')
-    )
     atribuicao = models.CharField('Atribuição do Conselheiro', max_length=1, choices=(('P', 'Presidente'), ('V', 'Vice-Presidente'), ('C', 'Conselheiro')))
     cargo = models.CharField('Categoria do Cargo', max_length=5, choices=CARGO_CHOICES)
     legislacao = models.ForeignKey(Legislacao)
@@ -212,48 +213,6 @@ class EstruturaRegimental(models.Model):
 
 
 class CargoRegimental(models.Model):
-    CARGO_CHOICES = (
-        ('Membro Nato',
-            (
-                ('MNSC', 'Membro Nato da Sociedade Civil'),
-                ('MNPP', 'Membro Nato do Poder Público')
-            )
-        ),
-        ('Indicação Institucional',
-            (
-                ('IISC', 'Indicação Institucional da Sociedade Civil'),
-                ('IISCE', 'Indicação Institucional da Sociedade Civil por Eleição'),
-                ('IIPP', 'Indicação Institucional do Poder Público')
-            )
-        ),
-        ('Indicação',
-            (
-                ('IPGA', 'Indicação por Gestor da Área'),
-                ('IPGAT', 'Indicação por Gestor da Área por Lista Triplice'),
-                ('IPG', 'Indicação pelo Governador'),
-                ('IPGT', 'Indicação pelo Governador por Lista Triplice'),
-                ('IPS', 'Indicação pelo Segmento da Sociedade Cívil'),
-                ('IPSE', 'Indicação pelo Segmento da Sociedade Cívil por Eleição')
-            )
-        )
-    )
-    PODER_CHOICES = (
-        ('Poderes Distritais',
-            (
-                ('PED', 'Poder Executivo Distrital'),
-                ('PLD', 'Poder Legislativo Distrital'),
-                ('PJD', 'Poder Judiciario Distrital')
-            )
-        ),
-        ('Poderes Federais',
-            (
-                ('PEF', 'Poder Executivo Federal'),
-                ('PLF', 'Poder Legislativo Federal'),
-                ('PJF', 'Poder Judiciario Federal')
-            )
-        ),
-        ('SC', 'Sociedade Cívil')
-    )
     estrutura = models.ForeignKey(EstruturaRegimental)
     cargo = models.CharField('Categoria do Cargo', max_length=5, choices=CARGO_CHOICES)
     origem = models.CharField('Origem', max_length=50, blank=True, null=True)
