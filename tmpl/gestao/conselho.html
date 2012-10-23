@@ -11,7 +11,7 @@
   <!-- Set the viewport width to device width for mobile -->
   <meta name="viewport" content="width=device-width" />
 
-  <title>Conselhos - Informações sobre o Conselho</title>
+  <title>Conselhos - Informações sobre o {{ conselho.nome }}</title>
 
   <!-- Included CSS Files -->
   <link rel="stylesheet" href="/static/stylesheets/foundation.css">
@@ -22,9 +22,11 @@
   <![endif]-->
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+  <script src="/static/javascripts/foundation.min.js"></script>
   <script src="/static/javascripts/jquery.customforms.js"></script>
   <script src="/static/javascripts/jquery.placeholder.min.js"></script>
   <script src="/static/javascripts/jquery.tooltips.js"></script>
+  <script src="/static/javascripts/jquery.foundation.topbar.js"></script>
   <script src="/static/javascripts/modernizr.foundation.js"></script>
   <script src="/static/javascripts/app.js"></script>
 
@@ -33,19 +35,56 @@
     <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
 
+  <script>
+    $(document).foundationTopBar();
+  </script>
+
 </head>
 <body>
-  <div class="container top-bar home-border">
-    <div class="attached">
-      <ul class="right">
-        <li><a href="http://gdf.df.gov.br"><img src="/static/images/secgov.png"></a>
-        </li>
+  <div class="contain-to-grid">
+    <nav class="top-bar">
+      <ul>
+        <li class="name"><h1><a href="/conselhos/">Sinco</a></h1></li>
+        <li class="toggle-topbar"><a href="#"></a></li>
       </ul>
-    </div>
+      <section>
+        <ul class="left">
+          <li class="has-dropdown"><a class="active" href="#">Conselhos</a>
+            <ul class="dropdown">
+              <li><label>de Estado</label></li>
+                <li class="has-dropdown"><a href="#">Administração Direta</a>
+                  <ul class="dropdown">
+                    <li><a href="/conselhos/CEADG/">Gestor de Politicas Públicas</a></li>
+                    <li><a href="/conselhos/CEADA/">Administração de Órgão Públicos</a></li>
+                    <li><a href="/conselhos/CEADFP/">Administração de Fundos Públicos</a></li>
+                    <li><a href="/conselhos/CEADFI/">Fiscais e Patrimoniais</a></li>
+                    <li><a href="/conselhos/CEADFF/">Fiscais de Fundos Federais</a></li>
+                    <li><a href="/conselhos/CEADAN/">Normativos e Reguladores</a></li>
+                  </ul>
+                </li>
+                <li class="has-dropdown"><a href="#">Administração Indireta</a>
+                  <ul class="dropdown">
+                    <li><a href="/conselhos/CEAIAD/">Administração</a></li>
+                    <li><a href="/conselhos/CEAIFI/">Fiscal</a></li>
+                  </ul>
+                </li>
+                <li class="divider"></li>
+              <li><label>Comunitários</label></li>
+              <li class="has-dropdown"><a href="#">Territoriais</a>
+                <ul class="dropdown">
+                  <li><a href="/conselhos/CTPC/">Prefeituras Comunitárias</a></li>
+                  <li><a href="/conselhos/CTAC/">Associações Comunitárias</a></li>
+                  <li><a href="/conselhos/CTCC/">Conselho da Cidade/Bairro</a></li>
+                </ul>
+              </li>
+              <li><a href="/conselhos/CCST">Setoriais</a></li>
+            </ul>
+          </li>
+      </ul>
+    </nav>
   </div>
 	<div class="row">
     	<div class="twelve columns">
-          <p><a href="/conselhos/conselhos/">--- Voltar</a></p>
       		<h2>{{ conselho.nome }}</h2>
       		<p class="subheader">Fundado em {{ fundacao.data }} pelo(a) {{ fundacao.get_categoria_display }} {{ fundacao.titulo }}</p>
         <hr />

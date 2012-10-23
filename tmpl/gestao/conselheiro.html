@@ -22,11 +22,14 @@
   <![endif]-->
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+  <script src="/static/javascripts/foundation.min.js"></script>
   <script src="/static/javascripts/jquery.customforms.js"></script>
   <script src="/static/javascripts/jquery.placeholder.min.js"></script>
   <script src="/static/javascripts/jquery.tooltips.js"></script>
+  <script src="/static/javascripts/jquery.foundation.topbar.js"></script>
   <script src="/static/javascripts/modernizr.foundation.js"></script>
   <script src="/static/javascripts/app.js"></script>
+
 
   <!-- IE Fix for HTML5 Tags -->
   <!--[if lt IE 9]>
@@ -35,33 +38,49 @@
 
 </head>
 <body>
-<ul class="nav-bar">
-  <li class="active"><a href="#">Conselheiros</a></li>
-  <li class="has-flyout">
-    <a href="#">Conselhos</a>
-    <a href="#" class="flyout-toggle"><span> </span></a>
-    <ul class="flyout vertical">
-      <li><a href="#">Conselhos Comunitários</a></li>
-      <li><a href="#">Prefeituras Comunitárias</a></li>
-      <li><a href="#">Associações Comunitárias</a></li>
-      <li><a href="#">Conselho da Cidade/Bairro</a></li>
-      <li><a href="#">Setoriais</a></li>
-      <li><a href="#"></a></li>
-      <li><a href="#">Conselhos de Estado</a></li>
-      <li><a href="#">Administração Direta - Gestor de Politicas Públicas</a></li>
-      <li><a href="#">Administração Direta - Administração de Órgão Públicos</a></li>
-      <li><a href="#">Administração Direta - Administração de Fundos Públicos</a></li>
-      <li><a href="#">Administração Direta - Fiscais e Patrimoniais</a></li>
-      <li><a href="#">Administração Direta - Fiscais de Fundos Federais</a></li>
-      <li><a href="#">Administração Direta - Normativos e Reguladores</a></li>
-      <li><a href="#">Administração Indireta - Administração</a></li>
-      <li><a href="#">Administração Indireta - Fiscal</a></li>
-      <li><a href="#"></a></li>
-      <li><a href="#">Não Classificados</a></li>
+  <div class="contain-to-grid">
+    <nav class="top-bar">
+      <ul>
+        <li class="name"><h1><a href="/conselhos/">Sinco</a></h1></li>
+        <li class="toggle-topbar"><a href="#"></a></li>
+      </ul>
+      <section>
+        <ul class="left">
+          <li class="has-dropdown"><a class="active" href="#">Conselhos</a>
+            <ul class="dropdown">
+              <li><label>de Estado</label></li>
+                <li class="has-dropdown"><a href="#">Administração Direta</a>
+                  <ul class="dropdown">
+                    <li><a href="/conselhos/CEADG/">Gestor de Politicas Públicas</a></li>
+                    <li><a href="/conselhos/CEADA/">Administração de Órgão Públicos</a></li>
+                    <li><a href="/conselhos/CEADFP/">Administração de Fundos Públicos</a></li>
+                    <li><a href="/conselhos/CEADFI/">Fiscais e Patrimoniais</a></li>
+                    <li><a href="/conselhos/CEADFF/">Fiscais de Fundos Federais</a></li>
+                    <li><a href="/conselhos/CEADAN/">Normativos e Reguladores</a></li>
+                  </ul>
+                </li>
+                <li class="has-dropdown"><a href="#">Administração Indireta</a>
+                  <ul class="dropdown">
+                    <li><a href="/conselhos/CEAIAD/">Administração</a></li>
+                    <li><a href="/conselhos/CEAIFI/">Fiscal</a></li>
+                  </ul>
+                </li>
+                <li class="divider"></li>
+              <li><label>Comunitários</label></li>
+              <li class="has-dropdown"><a href="#">Territoriais</a>
+                <ul class="dropdown">
+                  <li><a href="/conselhos/CTPC/">Prefeituras Comunitárias</a></li>
+                  <li><a href="/conselhos/CTAC/">Associações Comunitárias</a></li>
+                  <li><a href="/conselhos/CTCC/">Conselho da Cidade/Bairro</a></li>
+                </ul>
+              </li>
+              <li><a href="/conselhos/CCST">Setoriais</a></li>
+            </ul>
+          </li>
+      </ul>
+    </nav>
+  </div>
 
-    </ul>
-    </li>
-  </ul>
   
 	<div class="row">
     	<div class="twelve columns">
