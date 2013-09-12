@@ -1,4 +1,4 @@
-# Django settings for conselhos project.
+# Django settings for sinco project.
 
 import os
 
@@ -84,10 +84,10 @@ MIDDLEWARE_CLASSES = (
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'conselhos.urls'
+ROOT_URLCONF = 'sinco.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
-WSGI_APPLICATION = 'conselhos.wsgi.application'
+WSGI_APPLICATION = 'sinco.wsgi.application'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
