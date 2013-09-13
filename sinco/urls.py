@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, include, url
-from gestao.views import index, conselhos, conselho, conselheiro
+from core.views import index, conselhos, conselho, conselheiro
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin

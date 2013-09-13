@@ -8,7 +8,7 @@
 #  Software Foundation. See the file README for copying conditions.
 #
 #Importa os Modelos
-from gestao.models import Conselho, Conselheiro, Legislacao, Mandato, CargosPrevistos, Reuniao, CargoRegimental, EstruturaRegimental, Telefone
+from core.models import Conselho, Conselheiro, Legislacao, Mandato, CargosPrevistos, Reuniao, CargoRegimental, EstruturaRegimental, Telefone
 
 #Importa a classe ModelForm para personalização de formulário
 from django.forms import ModelForm
