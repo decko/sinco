@@ -71,7 +71,12 @@ class Conselheiro(models.Model):
         return self.nome
 
     def conselhos(self):
-        return "%s" % (", ".join([str(mandato.conselho) for mandato in self.mandato_set.all()]))
+        if self.titular.all():
+            return "Titular no %s" % (", titular no ".join([str(mandato.conselho) for mandato in self.titular.all()]) + ", suplente no ".join([str(mandato.conselho) for mandato in self.suplente.all()]))
+        elif self.suplente.all():
+            return "Suplente no %s" % (", suplente no".join([str(mandato.conselho) for mandato in self.suplente.all()]))
+        else:
+            return "%s" % ("Sem mandato")
 
 
 class Conselho(models.Model):

@@ -1,9 +1,8 @@
-conselhos/local_settings.py
+sinco/dev_settings.py
 *.pyc
 *.db
 legis/*
 */*.pyc
 */*.db
 scripts/*
-*/*.pyc
 */*.pyc

@@ -2,7 +2,20 @@
 
 from unipath import Path
 
+import dj_database_url
+
 PROJECT_DIR = Path(__file__).parent
+
+DEBUG = False
+TEMPLATE_DEBUG = DEBUG
+
+DATABASES = {
+    'default': dj_database_url.config(
+        default='sqlite:///' + PROJECT_DIR.child('database.db')
+    )
+}
+
+ALLOWED_HOSTS = []
 
 
 # Local time zone for this installation. Choices can be found here:
@@ -79,7 +92,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
@@ -94,7 +107,26 @@ TEMPLATE_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     PROJECT_DIR.child('templates'),
+    # PROJECT_DIR.child('core').child('templates'),
 )
+
+INSTALLED_APPS = (
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.sites',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    # Uncomment the next line to enable the admin:
+    'django.contrib.admin',
+    # Uncomment the next line to enable admin documentation:
+    # 'django.contrib.admindocs',
+    'flexselect',
+    'sinco.core',
+)
+
+
+
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
@@ -124,9 +156,3 @@ LOGGING = {
         },
     }
 }
-
-
-try:
-    from local_settings import *
-except ImportError:
-    pass

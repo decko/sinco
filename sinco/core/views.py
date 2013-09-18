@@ -10,7 +10,7 @@
 
 from django.shortcuts import render_to_response, get_object_or_404, get_list_or_404
 from django.db.models import Q
-from core.models import Conselho, Legislacao, Mandato, EstruturaRegimental, CargoRegimental, Conselheiro
+from sinco.core.models import Conselho, Legislacao, Mandato, EstruturaRegimental, CargoRegimental, Conselheiro
 
 
 def index(request):
