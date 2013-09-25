@@ -15,9 +15,10 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
-    (r'^flexselect/', include('flexselect.urls')),
-    url(r'^conselhos/$', index),
+    url(r'^flexselect/', include('flexselect.urls')),
+
     url(r'^conselhos/(?P<categoria>\w+)/$', conselhos),
+    url(r'^conselhos/$', index),
 
     url(r'^conselho/(?P<conselho_id>\d+)/$', conselho),
     url(r'^conselheiro/(?P<conselheiro_id>\d+)/$', conselheiro),

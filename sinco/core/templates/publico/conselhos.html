@@ -1,99 +1,15 @@
-<!DOCTYPE html>
-
-<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
-<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
-<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
-<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
-<head>
-  <meta charset="utf-8" />
-
-  <!-- Set the viewport width to device width for mobile -->
-  <meta name="viewport" content="width=device-width" />
-
-  <title>Conselhos</title>
-
-  <!-- Included CSS Files -->
-  <link rel="stylesheet" href="/static/stylesheets/foundation.css">
-  <link rel="stylesheet" href="/static/stylesheets/app.css">
-
-  <!--[if lt IE 9]>
-    <link rel="stylesheet" href="stylesheets/ie.css">
-  <![endif]-->
-
-  <script src="/static/javascripts/modernizr.foundation.js"></script>
-
-  <!-- IE Fix for HTML5 Tags -->
-  <!--[if lt IE 9]>
-    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-  <![endif]-->
-
-</head>
-<body>
-  <div class="contain-to-grid">
-    <nav class="top-bar">
-      <ul>
-        <li class="name"><h1><a href="/conselhos/">Sinco</a></h1></li>
-        <li class="toggle-topbar"><a href="#"></a></li>
-      </ul>
-      <section>
-        <ul class="left">
-          <li class="has-dropdown"><a class="active" href="#">Conselhos</a>
-            <ul class="dropdown">
-              <li><label>de Estado</label></li>
-                <li class="has-dropdown"><a href="#">Administração Direta</a>
-                  <ul class="dropdown">
-                    <li><a href="/conselhos/CEADG/">Gestor de Politicas Públicas</a></li>
-                    <li><a href="/conselhos/CEADA/">Administração de Órgão Públicos</a></li>
-                    <li><a href="/conselhos/CEADFP/">Administração de Fundos Públicos</a></li>
-                    <li><a href="/conselhos/CEADFI/">Fiscais e Patrimoniais</a></li>
-                    <li><a href="/conselhos/CEADFF/">Fiscais de Fundos Federais</a></li>
-                    <li><a href="/conselhos/CEADAN/">Normativos e Reguladores</a></li>
-                  </ul>
-                </li>
-                <li class="has-dropdown"><a href="#">Administração Indireta</a>
-                  <ul class="dropdown">
-                    <li><a href="/conselhos/CEAIAD/">Administração</a></li>
-                    <li><a href="/conselhos/CEAIFI/">Fiscal</a></li>
-                  </ul>
-                </li>
-                <li class="divider"></li>
-              <li><label>Comunitários</label></li>
-              <li class="has-dropdown"><a href="#">Territoriais</a>
-                <ul class="dropdown">
-                  <li><a href="/conselhos/CTPC/">Prefeituras Comunitárias</a></li>
-                  <li><a href="/conselhos/CTAC/">Associações Comunitárias</a></li>
-                  <li><a href="/conselhos/CTCC/">Conselho da Cidade/Bairro</a></li>
-                </ul>
-              </li>
-              <li><a href="/conselhos/CCST">Setoriais</a></li>
-            </ul>
-          </li>
-      </ul>
-    </nav>
-  </div>
+{% extends 'publico/base.html' %}
+{% block content %}
 	<div class="row">
     	<div class="twelve columns">
-      		<h2>Lista de Conselhos</h2>
+      		<h2>{{ descricao }}</h2>
         <hr />
     </div>
   </div>
   <div class="row">
-    <div class="twelve columns">
-      <h2>Conselhos Comunitários</h2>
-        <h3><a href="/conselhos/CTPC/">Territorial - Prefeitura Comunitária</a></h3>
-        <h3><a href="/conselhos/CTAC/">Territorial - Associação Comunitária</a></h3>
-        <h3><a href="/conselhos/CTCC/">Territorial - Conselho da Cidade/Bairro</a></h3>
-        <h3><a href="/conselhos/CCST/">Setoriais</a></h3>
-      <h2>Conselhos de Estado</h2>
-        <h3><a href="/conselhos/CEADG/">Administração Direta - Gestor de Politicas Públicas</a></h3>
-        <h3><a href="/conselhos/CEADA/">Administração Direta - Administração de Órgão Públicos</a></h3>
-        <h3><a href="/conselhos/CEADFP/">Administração Direta - Administração de Fundos Públicos</a></h3>
-        <h3><a href="/conselhos/CEADFI/">Administração Direta - Fiscais e Patrimoniais</a></h3>
-        <h3><a href="/conselhos/CEADFF/">Administração Direta - Fiscais de Fundos Federais</a></h3>
-        <h3><a href="/conselhos/CEADAN/">Administração Direta - Normativos e Reguladores</a></h3>
-        <h3><a href="/conselhos/CEAIAD/">Administração Indireta - Administração</a></h3>
-        <h3><a href="/conselhos/CEAIFI/">Administração Indireta - Fiscal</a></h3>
-
+    <div class="eight columns">
+    	{% for conselho in conselhos %}
+			<p><a href="/conselho/{{conselho.id}}/">{{ conselho.nome }}</a></p>
+		{% endfor %}
 	</div>
-</body>
+{% endblock content %}

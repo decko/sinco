@@ -8,20 +8,20 @@
 #  Software Foundation. See the file README for copying conditions.
 #
 
-from django.shortcuts import render_to_response, get_object_or_404, get_list_or_404
+from django.shortcuts import render, render_to_response, get_object_or_404, get_list_or_404
 from django.db.models import Q
 from sinco.core.models import Conselho, Legislacao, Mandato, EstruturaRegimental, CargoRegimental, Conselheiro
 
 
 def index(request):
     conselhos = Conselho.objects.all()
-    return render_to_response('publico/conselhos.html', {'conselhos': conselhos})
+    return render(request, 'publico/home.html', {'conselhos': conselhos})
 
 
 def conselhos(request, categoria):
     conselhos = get_list_or_404(Conselho, categoria=categoria)
     descricao = conselhos[0].get_categoria_display()
-    return render_to_response('publico/conselhos_categ.html', {'conselhos': conselhos, 'descricao': descricao})
+    return render(request, 'publico/conselhos.html', {'conselhos': conselhos, 'descricao': descricao})
 
 
 def conselho(request, conselho_id):
@@ -104,7 +104,7 @@ def conselho(request, conselho_id):
     cargo_indicacao_pp_dist_segsce = poder_pub_dist.filter(cargo='IPSE')  # Filtra os cargos de indicação pelo Segmento da Sociedade Cívil por Eleição
     cargo_indicacao_pp_fed_segsce = poder_pub_fed.filter(cargo='IPSE')  # Filtra os cargos de indicação pelo Segmento da Sociedade Cívil por Eleição
 
-    return render_to_response('publico/conselho.html', {
+    return render(request, 'publico/conselho.html', {
         'conselho': conselho,
         'legislacoes': legislacoes,
         'fundacao': fundacao,
@@ -182,4 +182,4 @@ def conselho(request, conselho_id):
 def conselheiro(request, conselheiro_id):
     conselheiro = get_object_or_404(Conselheiro, pk=conselheiro_id)
     mandatos = Mandato.objects.filter(Q(titular=conselheiro_id) | Q(suplente=conselheiro_id)).order_by('-data_inicial', '-data_termino')
-    return render_to_response('publico/conselheiro.html', {'conselheiro': conselheiro, 'mandatos': mandatos})
+    return render(request, 'publico/conselheiro.html', {'conselheiro': conselheiro, 'mandatos': mandatos})

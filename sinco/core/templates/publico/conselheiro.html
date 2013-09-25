@@ -1,87 +1,5 @@
-<!DOCTYPE html>
-
-<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
-<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
-<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
-<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
-<head>
-  <meta charset="utf-8" />
-
-  <!-- Set the viewport width to device width for mobile -->
-  <meta name="viewport" content="width=device-width" />
-
-  <title>Conselhos - Informações sobre o Conselheiro</title>
-
-  <!-- Included CSS Files -->
-  <link rel="stylesheet" href="/static/stylesheets/foundation.css">
-  <link rel="stylesheet" href="/static/stylesheets/app.css">
-
-  <!--[if lt IE 9]>
-    <link rel="stylesheet" href="stylesheets/ie.css">
-  <![endif]-->
-
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-  <script src="/static/javascripts/foundation.min.js"></script>
-  <script src="/static/javascripts/jquery.customforms.js"></script>
-  <script src="/static/javascripts/jquery.placeholder.min.js"></script>
-  <script src="/static/javascripts/jquery.tooltips.js"></script>
-  <script src="/static/javascripts/jquery.foundation.topbar.js"></script>
-  <script src="/static/javascripts/modernizr.foundation.js"></script>
-  <script src="/static/javascripts/app.js"></script>
-
-
-  <!-- IE Fix for HTML5 Tags -->
-  <!--[if lt IE 9]>
-    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-  <![endif]-->
-
-</head>
-<body>
-  <div class="contain-to-grid">
-    <nav class="top-bar">
-      <ul>
-        <li class="name"><h1><a href="/conselhos/">Sinco</a></h1></li>
-        <li class="toggle-topbar"><a href="#"></a></li>
-      </ul>
-      <section>
-        <ul class="left">
-          <li class="has-dropdown"><a class="active" href="#">Conselhos</a>
-            <ul class="dropdown">
-              <li><label>de Estado</label></li>
-                <li class="has-dropdown"><a href="#">Administração Direta</a>
-                  <ul class="dropdown">
-                    <li><a href="/conselhos/CEADG/">Gestor de Politicas Públicas</a></li>
-                    <li><a href="/conselhos/CEADA/">Administração de Órgão Públicos</a></li>
-                    <li><a href="/conselhos/CEADFP/">Administração de Fundos Públicos</a></li>
-                    <li><a href="/conselhos/CEADFI/">Fiscais e Patrimoniais</a></li>
-                    <li><a href="/conselhos/CEADFF/">Fiscais de Fundos Federais</a></li>
-                    <li><a href="/conselhos/CEADAN/">Normativos e Reguladores</a></li>
-                  </ul>
-                </li>
-                <li class="has-dropdown"><a href="#">Administração Indireta</a>
-                  <ul class="dropdown">
-                    <li><a href="/conselhos/CEAIAD/">Administração</a></li>
-                    <li><a href="/conselhos/CEAIFI/">Fiscal</a></li>
-                  </ul>
-                </li>
-                <li class="divider"></li>
-              <li><label>Comunitários</label></li>
-              <li class="has-dropdown"><a href="#">Territoriais</a>
-                <ul class="dropdown">
-                  <li><a href="/conselhos/CTPC/">Prefeituras Comunitárias</a></li>
-                  <li><a href="/conselhos/CTAC/">Associações Comunitárias</a></li>
-                  <li><a href="/conselhos/CTCC/">Conselho da Cidade/Bairro</a></li>
-                </ul>
-              </li>
-              <li><a href="/conselhos/CCST">Setoriais</a></li>
-            </ul>
-          </li>
-      </ul>
-    </nav>
-  </div>
-
-  
+{% extends 'publico/base.html' %}
+{% block content %}
 	<div class="row">
     	<div class="twelve columns">
       		<h2>{{ conselheiro.nome }}</h2>
@@ -89,26 +7,28 @@
     </div>
   </div>
   <div class="row">
-    <div class="twelve columns">
-		<dl class="tabs">
-  			<dd class="active"><a href="#dadosbasicos">Dados Básicos</a></dd>
-  			<dd><a href="#mandatos">Mandatos</a></dd>
-		</dl>
+    <div class="section-container auto" data-section>
 
-		<ul class="tabs-content">
-  			<li class="active" id="dadosbasicosTab">
-  				<p><b>Endereço:</b> {{ conselheiro.endereco|linebreaks }}</p>
-  				<p><b>E-Mail:</b> <a href="mailto:{{ conselheiro.email }}">{{ conselheiro.email }}</a></p>
-  				<p><b>Vinculo Político:</b> {{ conselheiro.vinculo|linebreaks }}</p>
-  				<p><b>Descrição:</b> {{ conselheiro.descricao }}</p>
-  			</li>
-        <li id="mandatosTab">
+      <section class="active">
+        <p class="title" data-section-title><a href="#panel-dadosbasicos">Dados Básicos</a></p>
+        <div class="content" data-sections-content>
+          <p><b>Endereço:</b> {{ conselheiro.endereco|linebreaks }}</p>
+          <p><b>E-Mail:</b> <a href="mailto:{{ conselheiro.email }}">{{ conselheiro.email }}</a></p>
+          <p><b>Vinculo Político:</b> {{ conselheiro.vinculo|linebreaks }}</p>
+          <p><b>Descrição:</b> {{ conselheiro.descricao }}</p>
+        </div>
+      </section>
+
+      <section>
+        <p class="title" data-section-title><a href="#panel-mandatos">Mandatos</a></p>
+        <div class="content" data-sections-content>
           <table>
-            <thead>Mandatos</thead>
+            <thead>
             <tr>
               <th>Conselho</th>
               <th>Cargo</th>
             </tr>
+            </thead>
             {% for mandato in mandatos %}
               <tr>
                 <td><a href="/conselho/{{ mandato.conselho.id }}">{{ mandato.conselho }}</a></td>
@@ -116,37 +36,8 @@
               </tr>
             {% endfor %}
           </table>
-        </li>
-  			<li id="mandatosTab">
-          <table>
-            <th><tr>
-              <td>Nome</td>
-              <td>Inicio do Mandato</td>
-              <td>Previsão de Encerramento</td>
-              <td>Encerramento do Mandato</td>
-              <td>Atribuição</td>
-              <td>Cargo</td>
-              <td>Recebe Jeton</td>
-            </tr></th>
-              {% for mandato in mandatos %}
-              <tr>
-                {% if mandato.suplente_exercicio %}
-                  <td>{{ mandato.suplente }}</td>
-                {% else %}
-                  <td>{{ mandato.titular }}</td>
-                {% endif %}
-                <td>{{ mandato.data_inicial }}</td>
-                <td>{{ mandato.data_final }}</td>
-                {% if mandato.data_termino %}
-                  <td>{{ mandato.data_termino }}</td>
-                {% else %}
-                  <td>Em exercicio</td>
-                {% endif %}
-                <td>{{ mandato.get_atribuicao_display }}</td>
-                <td>{{ mandato.cargo }}</td>
-                <td>{{ mandato.jeton }}</td>
-              </tr>
-              {% endfor %}
-          </table>
-        </li>
-		</ul>
+        </div>
+      </section>
+    </div>
+  </div>
+{% endblock content %}

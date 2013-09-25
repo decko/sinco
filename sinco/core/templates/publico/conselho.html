@@ -1,126 +1,47 @@
-<!DOCTYPE html>
-
-<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
-<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
-<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
-<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
-<head>
-  <meta charset="utf-8" />
-
-  <!-- Set the viewport width to device width for mobile -->
-  <meta name="viewport" content="width=device-width" />
-
-  <title>Conselhos - Informações sobre o {{ conselho.nome }}</title>
-
-  <!-- Included CSS Files -->
-  <link rel="stylesheet" href="/static/stylesheets/foundation.css">
-  <link rel="stylesheet" href="/static/stylesheets/app.css">
-
-  <!--[if lt IE 9]>
-    <link rel="stylesheet" href="stylesheets/ie.css">
-  <![endif]-->
-
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-  <script src="/static/javascripts/foundation.min.js"></script>
-  <script src="/static/javascripts/jquery.customforms.js"></script>
-  <script src="/static/javascripts/jquery.placeholder.min.js"></script>
-  <script src="/static/javascripts/jquery.tooltips.js"></script>
-  <script src="/static/javascripts/jquery.foundation.topbar.js"></script>
-  <script src="/static/javascripts/modernizr.foundation.js"></script>
-  <script src="/static/javascripts/app.js"></script>
-
-  <!-- IE Fix for HTML5 Tags -->
-  <!--[if lt IE 9]>
-    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-  <![endif]-->
-
-  <script>
-    $(document).foundationTopBar();
-  </script>
-
-</head>
-<body>
-  <div class="contain-to-grid">
-    <nav class="top-bar">
-      <ul>
-        <li class="name"><h1><a href="/conselhos/">Sinco</a></h1></li>
-        <li class="toggle-topbar"><a href="#"></a></li>
-      </ul>
-      <section>
-        <ul class="left">
-          <li class="has-dropdown"><a class="active" href="#">Conselhos</a>
-            <ul class="dropdown">
-              <li><label>de Estado</label></li>
-                <li class="has-dropdown"><a href="#">Administração Direta</a>
-                  <ul class="dropdown">
-                    <li><a href="/conselhos/CEADG/">Gestor de Politicas Públicas</a></li>
-                    <li><a href="/conselhos/CEADA/">Administração de Órgão Públicos</a></li>
-                    <li><a href="/conselhos/CEADFP/">Administração de Fundos Públicos</a></li>
-                    <li><a href="/conselhos/CEADFI/">Fiscais e Patrimoniais</a></li>
-                    <li><a href="/conselhos/CEADFF/">Fiscais de Fundos Federais</a></li>
-                    <li><a href="/conselhos/CEADAN/">Normativos e Reguladores</a></li>
-                  </ul>
-                </li>
-                <li class="has-dropdown"><a href="#">Administração Indireta</a>
-                  <ul class="dropdown">
-                    <li><a href="/conselhos/CEAIAD/">Administração</a></li>
-                    <li><a href="/conselhos/CEAIFI/">Fiscal</a></li>
-                  </ul>
-                </li>
-                <li class="divider"></li>
-              <li><label>Comunitários</label></li>
-              <li class="has-dropdown"><a href="#">Territoriais</a>
-                <ul class="dropdown">
-                  <li><a href="/conselhos/CTPC/">Prefeituras Comunitárias</a></li>
-                  <li><a href="/conselhos/CTAC/">Associações Comunitárias</a></li>
-                  <li><a href="/conselhos/CTCC/">Conselho da Cidade/Bairro</a></li>
-                </ul>
-              </li>
-              <li><a href="/conselhos/CCST">Setoriais</a></li>
-            </ul>
-          </li>
-      </ul>
-    </nav>
-  </div>
+{% extends 'publico/base.html' %}
+{% block content %}
 	<div class="row">
-    	<div class="twelve columns">
-      		<h2>{{ conselho.nome }}</h2>
+   	<div class="twelve columns">
+     		<h2>{{ conselho.nome }}</h2>
       		<p class="subheader">Fundado em {{ fundacao.data }} pelo(a) {{ fundacao.get_categoria_display }} {{ fundacao.titulo }}</p>
-        <hr />
+      <hr />
     </div>
   </div>
   <div class="row">
-    <div class="twelve columns">
-		<dl class="tabs">
-  			<dd class="active"><a href="#dadosbasicos">Dados Básicos</a></dd>
-  			<dd><a href="#legislacao">Legislação</a></dd>
-        <dd><a href="#estrutura">Estrutura</a></dd>
-  			<dd><a href="#mandatos">Mandatos</a></dd>
-        <dd><a href="#estatisticas">Estatísticas</a></dd>
-		</dl>
 
-		<ul class="tabs-content">
-  			<li class="active" id="dadosbasicosTab">
-  				<p><b>Categoria:</b> {{ conselho.get_categoria_display }}</p>
-  				<p><b>E-Mail:</b> <a href="mailto:{{ conselho.email }}">{{ conselho.email }}</a></p>
-  				<p><b>Endereço:</b> {{ conselho.endereco }}</p>
-  				<p><b>Site:</b> <a href="{{ conselho.site }}">{{ conselho.site }}</a></p>
-  				<p><b>Atribuições:</b> {{ conselho.atribuicoes|linebreaks }}</p>
-  			</li>
-  			<li id="legislacaoTab">
+    <div class="section-container auto" data-section>
+		  
+      <section class="active">
+        <p class="title" data-section-title><a href="#panel-dados-basicos">Dados Básicos</a></p>
+        <div class="content" data-section-content>
+          <p><b>Categoria:</b> {{ conselho.get_categoria_display }}</p>
+          <p><b>E-Mail:</b> <a href="mailto:{{ conselho.email }}">{{ conselho.email }}</a></p>
+          <p><b>Endereço:</b> {{ conselho.endereco }}</p>
+          <p><b>Site:</b> <a href="{{ conselho.site }}">{{ conselho.site }}</a></p>
+          <p><b>Atribuições:</b> {{ conselho.atribuicoes|linebreaks }}</p>
+        </div>
+      </section>
+
+      <section>
+        <p class="title" data-section-title><a href="#panel-legislacao">Legislação</a></p>
+        <div class="content" data-section-content>
           {% for legislacao in legislacoes %}
             <p><a href="{{ legislacao.link }}">{{ legislacao }}</a></p>
           {% endfor %}
-        </li>
-        <li id="estruturaTab">
+        </div>
+      </section>
+
+      <section>
+        <p class="title" data-section-title><a href="#panel-estrutura">Estrutura</a></p>
+        <div class="content" data-section-content>
           <table>
-            <thead>Cargos da Estrutura</thead>
+            <thead>
             <tr>
               <th>Cargo</th>
               <th>Legislação</th>
               <th>Conselheiro</th>
             </tr>
+            </thead>
             {% for cargoregimental in cargosregimentais %}
             {% if not cargoregimental.mandato_vigente %}
             <tr>
@@ -151,18 +72,24 @@
             {% endif %}
             {% endfor %}
           </table>
-        </li>
-  			<li id="mandatosTab">
+        </div>
+      </section>
+
+      <section>
+        <p class="title" data-section-title><a href="#panel-mandatos">Mandatos</a></p>
+        <div class="content" data-section-content>
           <table>
-            <th><tr>
-              <td>Nome</td>
-              <td>Inicio do Mandato</td>
-              <td>Previsão de Encerramento</td>
-              <td>Encerramento do Mandato</td>
-              <td>Atribuição</td>
-              <td>Cargo</td>
-              <td>Recebe Jeton</td>
-            </tr></th>
+            <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Inicio do Mandato</th>
+              <th>Previsão de Encerramento</th>
+              <th>Encerramento do Mandato</th>
+              <th>Atribuição</th>
+              <th>Cargo</th>
+              <th>Recebe Jeton</th>
+            </tr>
+            </thead>
               {% for mandato in mandatos %}
               <tr>
                 {% if not mandato.suplente_exercicio %}
@@ -187,15 +114,21 @@
               </tr>
               {% endfor %}
           </table>
-        </li>
-        <li id="estatisticasTab">
+        </div>
+      </section>
+
+      <section>
+        <p class="title" data-section-title><a href="#panel-estatisticas">Estatisticas</a></p>
+        <div class="content" data-section-content>
           <table>
+            <thead>
             <tr>
               <th></th>
               <th>Ocupados</th>
               <th>Livres</th>
               <th>Total</th>
             </tr>
+            </thead>
             <tr>
               <td>Cargos Previstos em Legislação</td>
               <td>{{ n_cargos_previstos_ocupados }}</td>
@@ -216,12 +149,14 @@
             </tr>
           </table>
           <table>
+            <thead>
             <tr>
               <th></th>
               <th>Sociedade Civil</th>
               <th>Poder Publico Distrital</th>
               <th>Poder Publico Federal</th>
             </tr>
+            </thead>
             <tr>
               <td>Membro Nato da Sociedade Cívil</td>
               <td id="center">{{ cargo_membro_nato_sc.count }}</td>
@@ -288,6 +223,9 @@
               <td>{{ cargo_indicacao_pp_dist_segsce.count }}</td>
               <td>{{ cargo_indicacao_pp_fed_segsce.count }}</td>
             </tr>
-
           </table>
-		</ul>
+        </div>
+      </section>
+    </div>
+  </div>
+{% endblock content %}
