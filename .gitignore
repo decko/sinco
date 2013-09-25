@@ -1,9 +1,14 @@
-conselhos/local_settings.py
+#Ignore dev environment settings
+*/dev_settings*
+
+#Ignore python cached objects
 *.pyc
+
+#Ignore local database files
 *.db
+
+#Ignore uploaded files
 legis/*
-*/*.pyc
-*/*.db
+
+#Ignore script files
 scripts/*
-*/*.pyc
-*/*.pyc
