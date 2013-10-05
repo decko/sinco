@@ -8,7 +8,11 @@
 #  Software Foundation. See the file README for copying conditions.
 #
 import os
+
+from datetime import datetime
+
 from django.db import models
+from django.db.models import Q
 from django.template.defaultfilters import slugify
 from django.core.exceptions import ValidationError
 
@@ -118,6 +122,15 @@ class Conselho(models.Model):
 
     def presidente(self):
         return self.mandato_set.get(atribuicao='P', data_termino__isnull=True)
+
+    def estrutura_vigente(self):
+        return self.estruturaregimental_set.latest('data')
+
+    def cargos_estrutura_vigente(self):
+        return self.estruturaregimental_set.latest('data').cargoregimental_set.all()
+
+    def cargos_vagos(self):
+        return self.estruturaregimental_set.latest('data').cargoregimental_set.filter( Q(mandato__data_termino__lte = datetime.today()) | Q(mandato__isnull = True))
 
     def mandato(self):
         return self.mandato_set.filter(data_termino__isnull=True)

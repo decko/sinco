@@ -8,9 +8,18 @@
 #  Software Foundation. See the file README for copying conditions.
 #
 
-from django.shortcuts import render, render_to_response, get_object_or_404, get_list_or_404
+from datetime import datetime
+from django.contrib import admin
+from django.shortcuts import render, get_object_or_404, get_list_or_404
 from django.db.models import Q
-from sinco.core.models import Conselho, Legislacao, Mandato, EstruturaRegimental, CargoRegimental, Conselheiro
+from sinco.core.models import (
+    Conselho,
+    Legislacao,
+    Mandato,
+    EstruturaRegimental,
+    CargoRegimental,
+    Conselheiro,
+)
 
 
 def index(request):
@@ -29,8 +38,8 @@ def conselho(request, conselho_id):
     legislacoes = Legislacao.objects.filter(conselho=conselho)  # Retorna todas as legislações do conselho
     fundacao = legislacoes.order_by('data')[0]  # Retorna a legislação mais antiga como a que funda o conselho
     mandatos = conselho.mandato()  # Recupera os mandatos
-    estrutura = EstruturaRegimental.objects.filter(conselho=conselho).latest('data')  # Recupera a ultima estrutura disponível pro conselho
-    cargosregimentais = CargoRegimental.objects.filter(estrutura=estrutura)  # Recupera todos os cargos da ultima estrutura
+    estrutura = conselho.estrutura_vigente()  # Recupera a ultima estrutura disponível pro conselho
+    cargosregimentais = conselho.cargos_estrutura_vigente()  # Recupera todos os cargos da ultima estrutura
 
     n_cargos = cargosregimentais.count()
     n_cargos_ocupados = mandatos.count()
@@ -183,3 +192,18 @@ def conselheiro(request, conselheiro_id):
     conselheiro = get_object_or_404(Conselheiro, pk=conselheiro_id)
     mandatos = Mandato.objects.filter(Q(titular=conselheiro_id) | Q(suplente=conselheiro_id)).order_by('-data_inicial', '-data_termino')
     return render(request, 'publico/conselheiro.html', {'conselheiro': conselheiro, 'mandatos': mandatos})
+
+
+# class RelatorioAdmin(admin.ModelAdmin):
+#     def get_urls(self):
+#         urls = super(RelatorioAdmin, self).get_urls()
+#         my_urls = patterns('',
+#             # (r'^relatorios/cargos_vagos/$', self.admin_site.admin_view(rel_cargos_vagos))
+#             (r'^relatorios/cargos_vagos/$', self.rel_cargos_vagos)
+#         )
+
+#         return my_urls + urls
+
+def rel_cargos_vagos(request):
+    conselhos = Conselho.objects.all()
+    return render(request, 'publico/rel_cargos_vagos.html', {'cargos_vagos': conselhos})

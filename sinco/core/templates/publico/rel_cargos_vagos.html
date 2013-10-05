@@ -1,0 +1,30 @@
+{% extends 'publico/base.html' %}
+{% block content %}
+
+<div class="row">
+<table>
+	<thead>
+		<tr>
+			<th>Conselho (Nº de Cargos Disponiveis)</th>
+			<th>Cargo</th>
+		</tr>
+	</thead>
+	{% for conselho in cargos_vagos %}
+	{% with cargos=conselho.cargos_vagos %}
+		{% if cargos %}
+			{% for cargo in cargos %}
+				<tr>
+				{% ifchanged cargo.conselho %}
+					<td><b>{{ cargo.conselho }} ({{ cargos.count }})</b></td><td>{{ cargo }}</td>
+				{% else %}
+					<td></td><td>{{cargo}}</td>
+				{% endifchanged %}
+				</tr>
+			{% endfor %}
+		{% endif %}
+	{% endwith %}
+	{% endfor %}
+</table>
+</div>
+
+{% endblock content %}
