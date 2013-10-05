@@ -10,19 +10,19 @@
 	<div class="row">
     	<div class="twelve columns">
       		<h2>Conselhos Comunitários</h2>
-        		<h3><a href="/conselhos/CTPC/">Territorial - Prefeitura Comunitária</a></h3>
-        		<h3><a href="/conselhos/CTAC/">Territorial - Associação Comunitária</a></h3>
-        		<h3><a href="/conselhos/CTCC/">Territorial - Conselho da Cidade/Bairro</a></h3>
-        		<h3><a href="/conselhos/CCST/">Setoriais</a></h3>
+        		<h3><a href="{% url 'conselhos' categoria='CTPC' %}">Territorial - Prefeitura Comunitária</a></h3>
+        		<h3><a href="{% url 'conselhos' categoria='CTAC' %}">Territorial - Associação Comunitária</a></h3>
+        		<h3><a href="{% url 'conselhos' categoria='CTCC' %}">Territorial - Conselho da Cidade/Bairro</a></h3>
+        		<h3><a href="{% url 'conselhos' categoria='CCST' %}">Setoriais</a></h3>
       		<h2>Conselhos de Estado</h2>
-        		<h3><a href="/conselhos/CEADG/">Administração Direta - Gestor de Politicas Públicas</a></h3>
-        		<h3><a href="/conselhos/CEADA/">Administração Direta - Administração de Órgão Públicos</a></h3>
-        		<h3><a href="/conselhos/CEADFP/">Administração Direta - Administração de Fundos Públicos</a></h3>
-        		<h3><a href="/conselhos/CEADFI/">Administração Direta - Fiscais e Patrimoniais</a></h3>
-        		<h3><a href="/conselhos/CEADFF/">Administração Direta - Fiscais de Fundos Federais</a></h3>
-        		<h3><a href="/conselhos/CEADAN/">Administração Direta - Normativos e Reguladores</a></h3>
-        		<h3><a href="/conselhos/CEAIAD/">Administração Indireta - Administração</a></h3>
-        		<h3><a href="/conselhos/CEAIFI/">Administração Indireta - Fiscal</a></h3>
+        		<h3><a href="{% url 'conselhos' categoria='CEADG' %}">Administração Direta - Gestor de Politicas Públicas</a></h3>
+        		<h3><a href="{% url 'conselhos' categoria='CEADA' %}">Administração Direta - Administração de Órgão Públicos</a></h3>
+        		<h3><a href="{% url 'conselhos' categoria='CEADFP' %}">Administração Direta - Administração de Fundos Públicos</a></h3>
+        		<h3><a href="{% url 'conselhos' categoria='CEADFI' %}">Administração Direta - Fiscais e Patrimoniais</a></h3>
+        		<h3><a href="{% url 'conselhos' categoria='CEADFF' %}">Administração Direta - Fiscais de Fundos Federais</a></h3>
+        		<h3><a href="{% url 'conselhos' categoria='CEADAN' %}">Administração Direta - Normativos e Reguladores</a></h3>
+        		<h3><a href="{% url 'conselhos' categoria='CEAIAD' %}">Administração Indireta - Administração</a></h3>
+        		<h3><a href="{% url 'conselhos' categoria='CEAIFI' %}">Administração Indireta - Fiscal</a></h3>
 		</div>
 	</div>
 {% endblock content %}

@@ -9,7 +9,7 @@
 
   
   <link rel="stylesheet" href="{{ STATIC_URL }}css/foundation.css">
-  {# <link rel="stylesheet" href="{{ STATIC_URL }}css/extras.css"> #}
+  <link rel="stylesheet" href="{{ STATIC_URL }}css/extras.css">
   <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Aldrich">
   <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Ubuntu">
   
@@ -22,7 +22,7 @@
   <nav class="top-bar">
     <ul class="title-area">
         <li class="name">
-          <h1><a href="/conselhos/">Participação Social</a></h1>
+          <h1 class="top-bar"><a href="/conselhos/">Participação Social</a></h1>
         </li>
         <li class="toggle-topbar menu-icon">
           <a href="#"><span>Menu</span></a>
@@ -35,30 +35,30 @@
               <li><label>de Estado</label></li>
                 <li class="has-dropdown"><a href="#">Administração Direta</a>
                   <ul class="dropdown">
-                    <li><a href="/conselhos/CEADG/">Gestor de Politicas Públicas</a></li>
-                    <li><a href="/conselhos/CEADA/">Administração de Órgão Públicos</a></li>
-                    <li><a href="/conselhos/CEADFP/">Administração de Fundos Públicos</a></li>
-                    <li><a href="/conselhos/CEADFI/">Fiscais e Patrimoniais</a></li>
-                    <li><a href="/conselhos/CEADFF/">Fiscais de Fundos Federais</a></li>
-                    <li><a href="/conselhos/CEADAN/">Normativos e Reguladores</a></li>
+                    <li><a href="{% url 'conselhos' categoria='CEADG' %}">Gestor de Politicas Públicas</a></li>
+                    <li><a href="{% url 'conselhos' categoria='CEADA' %}">Administração de Órgão Públicos</a></li>
+                    <li><a href="{% url 'conselhos' categoria='CEADFP' %}">Administração de Fundos Públicos</a></li>
+                    <li><a href="{% url 'conselhos' categoria='CEADFI' %}">Fiscais e Patrimoniais</a></li>
+                    <li><a href="{% url 'conselhos' categoria='CEADFF' %}">Fiscais de Fundos Federais</a></li>
+                    <li><a href="{% url 'conselhos' categoria='CEADAN' %}">Normativos e Reguladores</a></li>
                   </ul>
                 </li>
                 <li class="has-dropdown"><a href="#">Administração Indireta</a>
                   <ul class="dropdown">
-                    <li><a href="/conselhos/CEAIAD/">Administração</a></li>
-                    <li><a href="/conselhos/CEAIFI/">Fiscal</a></li>
+                    <li><a href="{% url 'conselhos' categoria='CEAIAD' %}">Administração</a></li>
+                    <li><a href="{% url 'conselhos' categoria='CEAIFI' %}">Fiscal</a></li>
                   </ul>
                 </li>
                 <li class="divider"></li>
               <li><label>Comunitários</label></li>
               <li class="has-dropdown"><a href="#">Territoriais</a>
                 <ul class="dropdown">
-                  <li><a href="/conselhos/CTPC/">Prefeituras Comunitárias</a></li>
-                  <li><a href="/conselhos/CTAC/">Associações Comunitárias</a></li>
-                  <li><a href="/conselhos/CTCC/">Conselho da Cidade/Bairro</a></li>
+                  <li><a href="{% url 'conselhos' categoria='CTPC' %}">Prefeituras Comunitárias</a></li>
+                  <li><a href="{% url 'conselhos' categoria='CTAC' %}">Associações Comunitárias</a></li>
+                  <li><a href="{% url 'conselhos' categoria='CTCC' %}">Conselho da Cidade/Bairro</a></li>
                 </ul>
               </li>
-              <li><a href="/conselhos/CCST">Setoriais</a></li>
+              <li><a href="{% url 'conselhos' categoria='CCST' %}">Setoriais</a></li>
             </ul>
           </li>
       </ul>

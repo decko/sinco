@@ -31,7 +31,7 @@
             </thead>
             {% for mandato in mandatos %}
               <tr>
-                <td><a href="/conselho/{{ mandato.conselho.id }}">{{ mandato.conselho }}</a></td>
+                <td><a href="{% url 'conselho' mandato.conselho.id %}">{{ mandato.conselho }}</a></td>
                 <td>{{ mandato.get_atribuicao_display }}, {{ mandato.cargo }}</td>
               </tr>
             {% endfor %}
