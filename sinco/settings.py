@@ -125,6 +125,7 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     'flexselect',
     'sinco.core',
+    'south',
 )
 
 # A sample logging configuration. The only tangible logging
