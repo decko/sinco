@@ -18,6 +18,7 @@ from sinco.core.models import (
     CargoRegimental,
     EstruturaRegimental,
     Telefone,
+    Pauta,
 )
 
 #Importa a classe ModelForm para personalização de formulário
@@ -133,9 +134,17 @@ class LegislacaoAdmin(admin.ModelAdmin):
     ]
 
 
+class PautaInLine(admin.TabularInline):
+    model = Pauta
+
+
 #Define a interface admin de Reuniões dos Conselhos
 class ReuniaoAdmin(admin.ModelAdmin):
-    list_display = ('data', 'conselho', 'ata')
+    search_fields = ['conselho']
+    list_display = ('conselho', 'data', 'url',)
+    inlines = [
+        PautaInLine,
+    ]
 
 
 #Define a interface admin de Conselheiros

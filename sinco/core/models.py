@@ -16,6 +16,8 @@ from django.db.models import Q
 from django.template.defaultfilters import slugify
 from django.core.exceptions import ValidationError
 
+from tags.fields import TagField
+
 CARGO_CHOICES = (
     ('Membro Nato',
         (
@@ -322,7 +324,6 @@ class Reuniao(models.Model):
 
     conselho = models.ForeignKey(Conselho)
     data = models.DateField('Data da Reunião')
-    pauta = models.TextField('Pauta da Reunião')
     ata = models.FileField('Arquivo da Ata', upload_to=get_image_path, blank=True)
     texto_ata = models.TextField('Texto da Ata', blank=True)
 
@@ -344,3 +345,9 @@ class Reuniao(models.Model):
         arquivo, ponto, extensao = self.ata.name.rpartition('.')
         self.ata.name = slugify(self.data) + '.' + extensao
         super(Reuniao, self).save()
+
+
+class Pauta(models.Model):
+    pauta = models.CharField('Pauta', max_length=300)
+    reuniao = models.ForeignKey(Reuniao)
+    tags = TagField('Tags', max_length=300)
