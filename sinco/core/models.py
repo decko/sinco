@@ -63,24 +63,24 @@ PODER_CHOICES = (
 
 
 class Conselheiro(models.Model):
-    nome = models.CharField('Nome Completo', max_length=50)
-    endereco = models.TextField('Endereço Completo', blank=True, null=True)
-    email = models.EmailField('E-Mail', blank=True, null=True)
-    vinculo = models.TextField('Vinculo Politico', blank=True, null=True)
-    descricao = models.TextField('Descrição', blank=True, null=True)
+    nome = models.CharField(u'Nome Completo', max_length=50)
+    endereco = models.TextField(u'Endereço Completo', blank=True, null=True)
+    email = models.EmailField(u'E-Mail', blank=True, null=True)
+    vinculo = models.TextField(u'Vinculo Politico', blank=True, null=True)
+    descricao = models.TextField(u'Descrição', blank=True, null=True)
 
     class Meta:
         verbose_name = 'conselheiro'
         ordering = ['nome']
 
     def __unicode__(self):
-        return self.nome
+        return u'%s' % self.nome
 
     def conselhos(self):
         if self.titular.all():
-            return "Titular no %s" % (", titular no ".join([str(mandato.conselho) for mandato in self.titular.all()]) + ", suplente no ".join([str(mandato.conselho) for mandato in self.suplente.all()]))
+            return u"Titular no %s" % (", titular no ".join([unicode(mandato.conselho) for mandato in self.titular.all()]) + ", suplente no ".join([unicode(mandato.conselho) for mandato in self.suplente.all()]))
         elif self.suplente.all():
-            return "Suplente no %s" % (", suplente no".join([str(mandato.conselho) for mandato in self.suplente.all()]))
+            return u"Suplente no %s" % (", suplente no".join([unicode(mandato.conselho) for mandato in self.suplente.all()]))
         else:
             return "%s" % ("Sem mandato")
 
