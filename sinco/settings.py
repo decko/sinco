@@ -12,10 +12,10 @@ TEMPLATE_DEBUG = DEBUG
 DATABASES = {
     'default': dj_database_url.config(
         default=os.environ.get('DB_CONFIG')
-        )
+    )
 }
 
-ALLOWED_HOSTS = ['.localhost', '127.0.0.1', 'participa.mobi']
+ALLOWED_HOSTS = ['.localhost', '127.0.0.1', 'conselhos.participa.mobi']
 
 
 # Local time zone for this installation. Choices can be found here:
@@ -120,10 +120,12 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # Uncomment the next line to enable the admin:
+    'suit',
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'flexselect',
+    # 'tastypie',
     'tags',
     'sinco.core',
     'south',
@@ -159,3 +161,9 @@ LOGGING = {
         },
     }
 }
+
+from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS as TCP
+
+TEMPLATE_CONTEXT_PROCESSORS = TCP + (
+    'django.core.context_processors.request',
+)
