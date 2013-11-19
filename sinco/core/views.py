@@ -220,10 +220,8 @@ def relatorio(request,tipo):
             Relatório dos Conselhos de Estado de Administração Indireta
     '''
     if (tipo == '1' or tipo == '2'):
-        print tipo
         return relatorio_conselheiro_conselho(request,tipo)
     elif(tipo == '3' or tipo == '4' or tipo == '5'):
-        print tipo
         return relatorio_conselho_adm(request,tipo)
     else:
         return render(request,'publico/dados_conselheiro.html',{ })
@@ -254,14 +252,14 @@ def relatorio_conselheiro_conselho(request,tipo):
         conselheiros = Mandato.objects.select_related('titular','conselho').filter(titular__isnull=False,conselho__isnull=False).order_by('titular__nome','conselho__nome')
 
     dados = []
-    for c in conselheiros:
-        tst = DadosConselheiro()
-        tst.conselho = c.conselho.nome
-        tst.conselheiro = c.titular.nome
-        tst.email = c.titular.email
-        if c.titular.telefone_set.all():
-            tst.telefones = c.titular.telefone_set.all()
-        dados.append(tst)
+    for conselheiro in conselheiros:
+        dadosconselheiro = DadosConselheiro()
+        dadosconselheiro.conselho = conselheiro.conselho.nome
+        dadosconselheiro.conselheiro = conselheiro.titular.nome
+        dadosconselheiro.email = conselheiro.titular.email
+        if conselheiro.titular.telefone_set.all():
+            dadosconselheiro.telefones = conselheiro.titular.telefone_set.all()
+        dados.append(dadosconselheiro)
 
     return render(request,'publico/dados_conselheiro.html', {'dados' : dados, 'tipo' : tipo})
 
