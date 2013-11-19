@@ -5,6 +5,7 @@ dj-static==0.0.5
 unipath==1.0
 gunicorn==18.0
 south==0.8.2
+suit
 -e git+https://github.com/avelino/django-tags/#egg=django-tags
 
 django-admin-flexselect==0.4.1
