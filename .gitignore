@@ -1,4 +1,5 @@
 #Ignore dev environment settings
+local_settings.py
 dev_settings.py
 
 #Ignore python cached objects

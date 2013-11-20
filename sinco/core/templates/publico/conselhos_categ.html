@@ -1,0 +1,76 @@
+{% extends 'publico/base.html' %}
+{% block content %}
+<div class="row">
+  <div class="twelve columns">
+    <center>
+    {% if tipo == '3' %}
+    <h4>Conselheiros da Administração Direta que recebem Jeton</h4>
+    {% elif tipo == '4'%}
+    <h4>Conselheiros da Administração Direta que NÃO recebem Jeton</h4>
+    {% elif tipo == '5'%}
+    <h4>Conselheiros da Administração Indireta</h4>
+    {% endif %}
+    </center>
+    <hr />
+  </div>
+</div>
+<br/>
+<div class="row">
+<div class="twelve columns">     
+  <table>
+    <thead>
+      <tr>
+        <th>Conselho</th>
+        <th>Conselheiro</th>
+        <th>Representação</th>
+        <th>Origem</th>
+        {% if tipo != '5' %}
+        <th>Jeton</th>
+        {% endif %}
+      </tr>
+    </thead>
+    {% for conselho in conselhos %}
+    <tr>
+      <td>
+        {% ifchanged conselho.conselho.nome %}
+          {{ conselho.conselho.nome }}
+        {% endifchanged %}
+      </td>
+      <td>{{ conselho.titular.nome }}</td>
+      <td>{{ conselho.cargo.origem }}</td>
+      <td>
+      {% if conselho.cargo.poder == 'PED' %}
+        Poder Executivo Distrital
+      {% elif conselho.cargo.poder == 'PLD' %}
+        Poder Legislativo Distrital
+      {% elif conselho.cargo.poder == 'PJD' %}
+        Poder Judiciário Distrital
+      {% elif conselho.cargo.poder == 'PEF' %}
+        Poder Executivo Federal
+      {% elif conselho.cargo.poder == 'PLF' %}
+        Poder Legislativo Federal
+      {% elif conselho.cargo.poder == 'PJF' %}
+        Poder Judiciário Federal
+      {% elif conselho.cargo.poder == 'SC' %}
+        Sociedade Civil
+      {% endif %}
+      </td>
+      <!-- Tipo = 5 -> Administração Indireta !-->
+      {% if tipo != '5' %}
+      <td>
+          {% if conselho.jeton %}
+            Recebe Jeton
+          {% else %}
+            Não recebe Jeton
+          {% endif %}
+      </td>
+      {% endif %}
+    </tr>
+    {% endfor %}
+    </table>
+    {% if conselhos %}
+    Total de Conselheiros: {{ conselhos|length }}
+    {% endif %}
+  </div>
+</div>
+{% endblock content %}

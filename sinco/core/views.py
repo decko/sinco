@@ -207,3 +207,72 @@ def conselheiro(request, conselheiro_id):
 def rel_cargos_vagos(request):
     conselhos = Conselho.objects.all()
     return render(request, 'publico/rel_cargos_vagos.html', {'cargos_vagos': conselhos})
+
+def relatorio(request,tipo):
+    '''
+        Tipo = 1
+            Relatorio dos Dados dos Conselheiros listados por Conselho
+        Tipo = 2
+            Relatorio dos Dados dos Conselheiros listados por Conselheiro
+        Tipo = 3
+            Relatório dos Conselhos de Estado de Administração Direta
+        Tipo = 4
+            Relatório dos Conselhos de Estado de Administração Indireta
+    '''
+    if (tipo == '1' or tipo == '2'):
+        return relatorio_conselheiro_conselho(request,tipo)
+    elif(tipo == '3' or tipo == '4' or tipo == '5'):
+        return relatorio_conselho_adm(request,tipo)
+    else:
+        return render(request,'publico/dados_conselheiro.html',{ })
+
+def relatorio_conselheiro_conselho(request,tipo):
+    '''A query ideal seria: 
+    SELECT  gestao_onselho.nome,
+            gestao_conselheiro.nome,
+            gestao_telefone.numero,
+            gestao_conselheiro.email
+    FROM gestao_mandato
+    JOIN gestao_conselho ON gestao_mandato.conselho_id = gestao_conselho.id
+    LEFT JOIN gestao_conselheiro ON gestao_mandato.titular_id = gestao_conselheiro.id
+    LEFT JOIN gestao_telefone ON gestao_telefone.conselheiro_id = gestao_conselheiro.id
+    WHERE
+    gestao_conselheiro.nome IS NOT NULL
+    ORDER BY gestao_conselho.nome, gestao_conselheiro.nome'''
+
+    class DadosConselheiro(object):
+        conselho = None
+        conselheiro = None
+        telefones = None
+        email = None
+
+    if (tipo == '1'):
+        conselheiros = Mandato.objects.select_related('titular','conselho').filter(titular__isnull=False,conselho__isnull=False).order_by('conselho__nome','titular__nome')
+    else:
+        conselheiros = Mandato.objects.select_related('titular','conselho').filter(titular__isnull=False,conselho__isnull=False).order_by('titular__nome','conselho__nome')
+
+    dados = []
+    for conselheiro in conselheiros:
+        dadosconselheiro = DadosConselheiro()
+        dadosconselheiro.conselho = conselheiro.conselho.nome
+        dadosconselheiro.conselheiro = conselheiro.titular.nome
+        dadosconselheiro.email = conselheiro.titular.email
+        if conselheiro.titular.telefone_set.all():
+            dadosconselheiro.telefones = conselheiro.titular.telefone_set.all()
+        dados.append(dadosconselheiro)
+
+    return render(request,'publico/dados_conselheiro.html', {'dados' : dados, 'tipo' : tipo})
+
+def relatorio_conselho_adm(request,tipo):
+    #Direta - Recebe jeton
+    if (tipo == '3'):
+        conselhos = Mandato.objects.filter(conselho__categoria__startswith="CEAD",jeton=True).select_related('titular','conselho','cargo').order_by('conselho__nome','titular__nome')
+
+    #Direta - NÃO recebe jeton
+    elif (tipo == '4'):
+        conselhos = Mandato.objects.filter(conselho__categoria__startswith="CEAD",jeton=False).select_related('titular','conselho','cargo').order_by('conselho__nome','titular__nome')
+    #Indireta
+    else:
+        conselhos = Mandato.objects.filter(conselho__categoria__startswith="CEAI").select_related('titular','conselho','cargo').order_by('conselho__nome','titular__nome')
+
+    return render(request,'publico/conselhos_categ.html', {'conselhos' : conselhos, 'tipo' : tipo})

@@ -61,6 +61,18 @@
               <li><a href="{% url 'conselhos' categoria='CCST' %}">Setoriais</a></li>
             </ul>
           </li>
+          <li class="has-dropdown"><a class="active" href="#">Relatórios</a>
+            <ul class="dropdown">
+              <li>
+                    <li><a href="{% url 'dados_conselheiros' tipo='1' %}">Dados dos Conselheiros - Por Conselho</a></li>
+                    <li><a href="{% url 'dados_conselheiros' tipo='2' %}">Dados dos Conselheiros - Por Conselheiro</a></li>
+                    <li><a href="{% url 'dados_conselheiros' tipo='3' %}">Conselheiros de Administração Direta - Com Jeton</a></li>
+                    <li><a href="{% url 'dados_conselheiros' tipo='4' %}">Conselheiros de Administração Direta - Sem Jeton</a></li>
+                    <li><a href="{% url 'dados_conselheiros' tipo='5' %}">Conselheiros da Administração Indireta</a></li>
+                    <li><a href="{% url 'rel_cargos_vagos' %}">Cargos Vagos</a></li>
+                </li>
+            </ul>
+          </li>
       </ul>
       </section>
     </nav>

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.conf.urls import patterns, include, url
-from sinco.core.views import index, conselhos, conselho, conselheiro, rel_cargos_vagos
+from sinco.core.views import index, conselhos, conselho, conselheiro, rel_cargos_vagos, relatorio
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -21,6 +21,7 @@ urlpatterns = patterns('',
     url(r'^flexselect/', include('flexselect.urls')),
 
     url(r'^relatorios/cargos_vagos/$', rel_cargos_vagos, name="rel_cargos_vagos"),
+    url(r'^relatorios/dados_conselheiros/(?P<tipo>\d+)/$', relatorio, name="dados_conselheiros"),
 
     url(r'^conselhos/(?P<categoria>\w+)/$', conselhos, name="conselhos"),
     url(r'^conselhos/$', index, name="home"),

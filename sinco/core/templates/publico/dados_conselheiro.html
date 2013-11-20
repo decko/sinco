@@ -1,0 +1,49 @@
+{% extends 'publico/base.html' %}
+  {% block content %}
+  <div class="row">
+    <div class="twelve columns">
+      <center>
+        <h4>Contatos dos Conselheiros</h4>
+      </center>
+      <hr />
+      {% if tipo == '1'%}
+      <div style="text-align: right">Ordenado por Conselho</div>
+      {% endif %}
+      {% if tipo == '2' %}
+      <div style="text-align: right">Ordenado por Conselheiro</div>
+      {% endif %}
+      <br/>
+      <div class="twelve columns">     
+          <table>
+            <thead>
+            <tr>
+              <th>Conselho</th>
+              <th>Conselheiro</th>
+              <th>Telefone</th>
+              <th>Email</th>
+            </tr>
+            </thead>
+            {% for t in dados %}
+              <tr>
+                <td>{{ t.conselho }}</td>
+                <td>{{ t.conselheiro }}</td>
+                <td>
+                {% if t.telefones %}
+                  {% for tel in t.telefones %}
+                    {{ tel }}
+                  {% endfor %}
+                {% else %}
+                  Sem numero
+                {% endif %}
+                </td>
+                <td>{{ t.email }}</td>
+              </tr>
+            {% endfor %}
+          </table>
+    </div> 
+ </div>
+  {% if dados %}
+    Total de Conselheiros: {{ dados|length }}
+  {% endif %}
+</div>
+{% endblock content %}
